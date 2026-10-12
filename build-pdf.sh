@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Build REPORT.md into REPORT.pdf with pandoc + XeLaTeX.
+# Build REPORT.md into REPORT.pdf with pandoc + XeLaTeX. Styling lives in
+# pdf/header.tex; markdown extras (alerts, <br>, tables) are pdf/*.lua.
 set -euo pipefail
 
 cd "$(dirname "$0")"
@@ -12,22 +13,22 @@ pandoc "$INPUT" \
   --lua-filter=pdf/alerts.lua \
   --lua-filter=pdf/linebreaks.lua \
   --lua-filter=pdf/table-widths.lua \
+  --lua-filter=pdf/tables.lua \
   --pdf-engine=xelatex \
   --include-in-header=pdf/header.tex \
   --shift-heading-level-by=-1 \
+  --number-sections \
   --toc \
   --toc-depth=3 \
-  -V lof=true \
-  -V lot=true \
-  -V classoption=table \
+  -V documentclass=scrartcl \
   -V papersize=a4 \
   -V geometry:margin=1in \
+  -V geometry:includehead \
+  -V geometry:includefoot \
   -V linestretch=1.5 \
   -V fontsize=12pt \
   -V mainfont="Palatino" \
   -V colorlinks=true \
-  -V linkcolor=black \
-  -V toccolor=black \
   -o "$OUTPUT"
 
 echo "Wrote $OUTPUT"
