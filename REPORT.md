@@ -26,6 +26,8 @@ Because I have prior knowledge in this specific field (web/API/database), I do
 not have a priority list for the features. I am confident I can deliver all the
 features to a high standard on time.
 
+The product shall be called **Bloggy**.
+
 ## Target Audience
 
 There is no specific demographic or user base in mind for this project, it is
@@ -57,6 +59,16 @@ customizing the look. That customization is beyond this project's scope. I'll
 use WordPress's complexity as a warning: there are many plugins, and while they
 help, they can be overwhelming for someone wanting a straightforward public
 blog.
+
+### Existing Products Comparison
+
+| Product   | Advantages                                                                   | Disadvantages                                                                        |
+| --------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Blogger   | • Simple, easy to understand UI<br>• Free<br>• No setup or hosting needed    | • Limited customisation<br>• Dated look<br>• Few updates or new features             |
+| WordPress | • Huge market share and community<br>• Highly customisable<br>• Many plugins | • Overwhelming for simple blogs<br>• Plugins add complexity<br>• Self-hosting needed |
+| Bloggy    | • Simplest UI/UX<br>• Performant                                             | • No extensions<br>• Less features<br>• Tiny userbase                                |
+
+Table: Existing Products Comparison
 
 ## Architecture
 

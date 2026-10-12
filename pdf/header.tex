@@ -33,9 +33,11 @@
 }
 \makeatother
 
-% Start the list of figures and the body on fresh pages
+% Start the list of figures, list of tables and the body on fresh pages
 \let\oldlistoffigures\listoffigures
 \renewcommand{\listoffigures}{\clearpage\oldlistoffigures\clearpage}
+\let\oldlistoftables\listoftables
+\renewcommand{\listoftables}{\clearpage\oldlistoftables\clearpage}
 
 % GitHub-style alerts (see pdf/alerts.lua): coloured bar + title
 \usepackage{framed}
@@ -53,3 +55,13 @@
 % Keep figures exactly where they appear in the markdown
 \usepackage{float}
 \floatplacement{figure}{H}
+
+% Zebra-striped table rows (needs xcolor's `table` option, passed via
+% classoption in build-pdf.sh). longtable counts the caption and both header
+% copies as rows, so start at row 4 to leave the header unshaded.
+\definecolor{tablerow}{HTML}{F0F3F8}
+\AtBeginEnvironment{longtable}{\rowcolors{4}{tablerow}{white}}
+% Remove booktabs' padding around rules so the row colours have no gaps
+\setlength{\aboverulesep}{0pt}
+\setlength{\belowrulesep}{0pt}
+\renewcommand{\arraystretch}{1.3}

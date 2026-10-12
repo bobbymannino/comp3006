@@ -10,12 +10,16 @@ OUTPUT="${2:-${INPUT%.md}.pdf}"
 pandoc "$INPUT" \
   --from markdown+alerts \
   --lua-filter=pdf/alerts.lua \
+  --lua-filter=pdf/linebreaks.lua \
+  --lua-filter=pdf/table-widths.lua \
   --pdf-engine=xelatex \
   --include-in-header=pdf/header.tex \
   --shift-heading-level-by=-1 \
   --toc \
   --toc-depth=3 \
   -V lof=true \
+  -V lot=true \
+  -V classoption=table \
   -V papersize=a4 \
   -V geometry:margin=1in \
   -V linestretch=1.5 \
