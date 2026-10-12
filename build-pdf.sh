@@ -8,7 +8,8 @@ INPUT="${1:-REPORT.md}"
 OUTPUT="${2:-${INPUT%.md}.pdf}"
 
 pandoc "$INPUT" \
-  --from markdown \
+  --from markdown+alerts \
+  --lua-filter=pdf/alerts.lua \
   --pdf-engine=xelatex \
   --include-in-header=pdf/header.tex \
   --shift-heading-level-by=-1 \

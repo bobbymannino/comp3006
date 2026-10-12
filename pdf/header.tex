@@ -36,3 +36,16 @@
 % Start the list of figures and the body on fresh pages
 \let\oldlistoffigures\listoffigures
 \renewcommand{\listoffigures}{\clearpage\oldlistoffigures\clearpage}
+
+% GitHub-style alerts (see pdf/alerts.lua): coloured bar + title
+\usepackage{framed}
+\definecolor{alertnote}{HTML}{0969DA}
+\definecolor{alerttip}{HTML}{1A7F37}
+\definecolor{alertimportant}{HTML}{8250DF}
+\definecolor{alertwarning}{HTML}{9A6700}
+\definecolor{alertcaution}{HTML}{CF222E}
+\newenvironment{alert}[2]{%
+  \def\FrameCommand{{\color{#1}\vrule width 3pt}\hspace{10pt}}%
+  \MakeFramed{\advance\hsize-\width\FrameRestore}%
+  \noindent{\color{#1}\bfseries #2}\par
+}{\endMakeFramed}
