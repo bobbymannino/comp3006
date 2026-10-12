@@ -19,7 +19,12 @@ blog is as follows:
 - Users can edit/delete their own accounts
 - Users can create/read/update/delete their own posts
 - Users can like their own and other peoples posts
+- Users can publish/unpublish their posts
 - On each posts page there will be a live visitor count
+
+Because I have prior knowledge in this specific field (web/API/database), I do
+not have a priority list for the features. I am confident I can deliver all the
+features to a high standard on time.
 
 ## Target Audience
 
@@ -34,7 +39,24 @@ feeling fast to use.
 There are several existing products that provide similar functionality to this
 project. Some of the most popular ones include:
 
-- TODO
+### [Blogger](https://www.blogger.com/)
+
+![Blogger](blogger.png){width=500px}
+
+I have not used Blogger in over 5 years, but when I was using it for school it
+got the job done. I will take inspiration from Blogger from a UX perspective,
+keeping things simple and easy to understand was and is Bloggers best feature.
+
+### [WordPress](https://wordpress.org/)
+
+![WordPress](wordpress.jpg){width=500px}
+
+I've never used WordPress before, but I know it has a massive market share
+online. I also know it's more than a blog; it can do nearly anything, including
+customizing the look. That customization is beyond this project's scope. I'll
+use WordPress's complexity as a warning: there are many plugins, and while they
+help, they can be overwhelming for someone wanting a straightforward public
+blog.
 
 ## Architecture
 
@@ -60,3 +82,19 @@ having any UI they can do that without any changes to the API container.
 > [!NOTE]
 > Whilst it is possible to have multiple databases (read replicas) that is out
 > of scope for this project so it will remain a single container.
+
+### Nginx
+
+_TODO_
+
+### Web UI
+
+_TODO_
+
+### Database
+
+_TODO_
+
+### API
+
+_TODO_
