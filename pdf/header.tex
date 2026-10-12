@@ -1,0 +1,38 @@
+% Extra LaTeX loaded into the preamble by build-pdf.sh
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+
+\definecolor{titleblue}{HTML}{1F365B}
+
+% Footer with the page number on every page (fancy + plain, which
+% LaTeX uses for chapter/TOC pages)
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+\pagestyle{plain}
+
+% Blue title page built from the title/author metadata
+\makeatletter
+\renewcommand{\maketitle}{%
+  \begin{titlepage}
+    \pagecolor{titleblue}\color{white}%
+    \vspace*{\fill}
+    \begin{center}
+      {\Huge\bfseries \@title\par}
+      \vspace{2em}
+      {\Large Author: \@author\par}
+      \vspace{1em}
+      {\Large Updated: \today\par}
+    \end{center}
+    \vspace*{\fill}
+  \end{titlepage}
+  \nopagecolor
+}
+\makeatother
+
+% Start the list of figures and the body on fresh pages
+\let\oldlistoffigures\listoffigures
+\renewcommand{\listoffigures}{\clearpage\oldlistoffigures\clearpage}
