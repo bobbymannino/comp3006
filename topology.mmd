@@ -1,0 +1,25 @@
+flowchart LR
+    client([Browser])
+
+    subgraph docker [Docker network]
+        nginx["Nginx<br/>reverse proxy & load balancer"]
+
+        subgraph webs [Web UI containers]
+            web1[web-1]
+            web2[web-2]
+            webn[web-n]
+        end
+
+        subgraph apis [API containers]
+            api1[api-1]
+            api2[api-2]
+            apin[api-n]
+        end
+
+        db[(Database)]
+    end
+
+    client -->|HTTP / WebSocket| nginx
+    nginx -->|"/"| web1 & web2 & webn
+    nginx -->|"/api"| api1 & api2 & apin
+    api1 & api2 & apin --> db
