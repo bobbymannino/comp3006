@@ -185,6 +185,31 @@ Table: API Endpoints
 
 ## Testing
 
-## CI/CD
+Testing will be split into 2 categories: isolated and holistic.
+
+### Isolated Testing
+
+This testing will be isolated to each image, for instance API testing will be
+API specific and not interact with any other component (such as Nginx). This
+will be useful for rapid testing and isolated test suites for scoped changes.
+
+_TODO_
+
+### Holistic Testing
+
+Comprehensive testing will be carried out on the whole system together,
+including every part, and will make sure they all function as intended. The
+point of this is to ensure that all the components work together as expected.
+
+_TODO_
+
+## Continuous Integration/Deployment
+
+Using GitHub's built in automations platform
+[Actions](https://github.com/features/actions), I will add in automatic testing
+along with automated Docker image creation. The image creation will only apply
+to the **web UI and API** images.
 
 ## Evaluation
+
+_TODO_
