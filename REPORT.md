@@ -182,3 +182,9 @@ so the `FK` fields are references the API is responsible for keeping valid.
 | DELETE | `/posts/:id/likes` | Delete a like by user and post | Y             |
 
 Table: API Endpoints
+
+## Testing
+
+## CI/CD
+
+## Evaluation
