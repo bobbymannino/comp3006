@@ -125,3 +125,30 @@ provide the user with a simple, intuitive interface to interact with the blog.
 The API image is where the business logic of the blog is implemented. It will
 handle all the requests from the web UI and the database. It will be able to
 work without the web UI for people who want to build their own interfaces.
+
+## Structures
+
+### Database Structures
+
+The database will hold three collections: `users`, `posts` and `likes`. A user
+can write many posts, and a like links one user to one post, which gives the
+many-to-many "users like posts" relationship needed for FR04.
+
+Each collection's fields are shown below. MongoDB does not enforce foreign keys,
+so the `FK` fields are references the API is responsible for keeping valid.
+
+![Entity Relationship Diagram](graphs/erd.png){width=500px}
+
+- **Users** — `username` and `email` have unique indexes so two accounts cannot
+  share either. Only a hash of the password is stored, never the password
+  itself.
+- **Posts** — `published` and `publishedAt` cover FR05; unpublished posts are
+  only visible to their author. `likeCount` is a copy of the number of likes so
+  the feed does not need to count the `likes` collection for every post.
+- **Likes** — a compound unique index on `userId` and `postId` stops a user
+  liking the same post twice. Unliking a post deletes the document.
+
+> [!NOTE]
+> When a user deletes their account (FR02) the API will also delete their posts,
+> the likes on those posts and the likes they have given, so no documents are
+> left pointing at a user that no longer exists.
