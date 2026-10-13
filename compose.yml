@@ -1,0 +1,15 @@
+name: bloggy
+services:
+  mongo:
+    container_name: bloggy_mongo
+    image: mongo:9
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - bloggy_mongo_data:/data/db
+      - ./mongo/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "6001:27017"
+
+volumes:
+  bloggy_mongo_data:
