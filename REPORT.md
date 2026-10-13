@@ -12,21 +12,26 @@ author: "Bobby Mannino"
 
 ## Introduction
 
-The project I have decided to pursue is making a blog. The functionality of the
-blog is as follows:
+The project I have decided to pursue is making a blog. The product shall be
+called **Bloggy**. The key priorities for this product are for it to work, have
+a simple UX, and to be performant.
 
-- Anybody can create an account
-- Users can edit/delete their own accounts
-- Users can create/read/update/delete their own posts
-- Users can like their own and other peoples posts
-- Users can publish/unpublish their posts
-- On each posts page there will be a live visitor count
+## Functional Requirements
+
+| ID   | Requirement                                                                      |
+| ---- | -------------------------------------------------------------------------------- |
+| FR01 | Users can create an account                                                      |
+| FR02 | Users can edit or delete their own accounts                                      |
+| FR03 | Users can create/read/update/delete their own posts                              |
+| FR04 | Users can like their own and other peoples posts                                 |
+| FR05 | Users can publish/unpublish their posts                                          |
+| FR06 | The feed page will be live meaning new posts will be shown as they are published |
+
+Table: Functional Requirements
 
 Because I have prior knowledge in this specific field (web/API/database), I do
-not have a priority list for the features. I am confident I can deliver all the
-features to a high standard on time.
-
-The product shall be called **Bloggy**.
+not have a priority list for the functional requirements. I'm confident I can
+deliver all the features to a high standard on time.
 
 ## Target Audience
 
