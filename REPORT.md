@@ -22,10 +22,11 @@ a simple UX, and to be performant.
 | ---- | -------------------------------------------------------------------------------- |
 | FR01 | Users can create an account                                                      |
 | FR02 | Users can edit or delete their own accounts                                      |
-| FR03 | Users can create/read/update/delete their own posts                              |
+| FR03 | Users can create/update/delete their own posts                                   |
 | FR04 | Users can like their own and other peoples posts                                 |
 | FR05 | Users can publish/unpublish their posts                                          |
 | FR06 | The feed page will be live meaning new posts will be shown as they are published |
+| FR07 | Any user can see all published posts                                             |
 
 Table: Functional Requirements
 
@@ -152,3 +153,21 @@ so the `FK` fields are references the API is responsible for keeping valid.
 > When a user deletes their account (FR02) the API will also delete their posts,
 > the likes on those posts and the likes they have given, so no documents are
 > left pointing at a user that no longer exists.
+
+### API Endpoints
+
+| Method | Path               | Action                         | Requires Auth |
+| ------ | ------------------ | ------------------------------ | ------------- |
+| POST   | `/users`           | Create a new user              | N             |
+| PUT    | `/users/:id`       | Update a user by id            | Y             |
+| DELETE | `/users/:id`       | Delete a user                  | Y             |
+| GET    | `/posts`           | Get all posts                  | N             |
+| WS     | `/posts`           | Get all posts live             | N             |
+| POST   | `/posts`           | Create a new post              | Y             |
+| GET    | `/posts/:id`       | Get a post by id               | N             |
+| PUT    | `/posts/:id`       | Update a post by id            | Y             |
+| DELETE | `/posts/:id`       | Delete a post by id            | Y             |
+| POST   | `/posts/:id/likes` | Create a new like              | Y             |
+| DELETE | `/posts/:id/likes` | Delete a like by user and post | Y             |
+
+Table: API Endpoints
