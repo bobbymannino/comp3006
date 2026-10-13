@@ -102,16 +102,26 @@ having any UI they can do that without any changes to the API container.
 
 ### Nginx
 
-_TODO_
-
-### Web UI
-
-_TODO_
+This image will not contain much custom code. There will be a configuration file
+to point specific paths to containers, a load balancer setup and that will be
+it. Nginx comes with enough boilerplate to handle most of what I want to
+achieve.
 
 ### Database
 
-_TODO_
+The database will be a MongoDB container. It will be used to store all the
+persistent data from the blog, there will be no Redis or other cache layer as
+that is out of scope for this project. The database container will only be
+accessible to other containers on the same host machine, for this project it
+will only be accessed by the API image.
+
+### Web UI
+
+The web UI image will be responsible for any interactions the user has. It will
+provide the user with a simple, intuitive interface to interact with the blog.
 
 ### API
 
-_TODO_
+The API image is where the business logic of the blog is implemented. It will
+handle all the requests from the web UI and the database. It will be able to
+work without the web UI for people who want to build their own interfaces.
