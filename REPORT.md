@@ -127,6 +127,17 @@ The API image is where the business logic of the blog is implemented. It will
 handle all the requests from the web UI and the database. It will be able to
 work without the web UI for people who want to build their own interfaces.
 
+## Design Principles
+
+My favorite principles are DRY and KISS, if you stick to these I believe your
+product will always be better than if you do not. KISS (keep it simple, stupid)
+can apply to both UI and the source code. Keeping your code simplified,
+structured, and maintainable is key.
+
+DRY (don't repeat yourself) is the act of not repeating any code. If the code is
+used 2 or more times then you should be separating that part of the code. This
+helps maintainability and can reduce bugs.
+
 ## Structures
 
 ### Database Structures
