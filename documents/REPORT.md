@@ -49,7 +49,7 @@ project. Some of the most popular ones include:
 
 ### [Blogger](https://www.blogger.com/)
 
-![Blogger](media/blogger.png){width=500px}
+![Blogger](../media/blogger.png){width=500px}
 
 I have not used Blogger in over 5 years, but when I was using it for school it
 got the job done. I will take inspiration from Blogger from a UX perspective,
@@ -57,7 +57,7 @@ keeping things simple and easy to understand was and is Bloggers best feature.
 
 ### [WordPress](https://wordpress.org/)
 
-![WordPress](media/wordpress.jpg){width=500px}
+![WordPress](../media/wordpress.jpg){width=500px}
 
 I've never used WordPress before, but I know it has a massive market share
 online. I also know it's more than a blog; it can do nearly anything, including
@@ -95,7 +95,7 @@ scale them independently and update them separately. If traffic becomes API
 heavy you can scale those up, or if the user wants to host the API without
 having any UI they can do that without any changes to the API container.
 
-![Architecture Topology](graphs/topology.png){width=500px}
+![Architecture Topology](../graphs/topology.png){width=500px}
 
 > [!NOTE]
 > Whilst it is possible to have multiple databases (read replicas) that is out
@@ -149,7 +149,7 @@ many-to-many "users like posts" relationship needed for FR04.
 Each collection's fields are shown below. MongoDB does not enforce foreign keys,
 so the `FK` fields are references the API is responsible for keeping valid.
 
-![Entity Relationship Diagram](graphs/erd.png){width=500px}
+![Entity Relationship Diagram](../graphs/erd.png){width=500px}
 
 - **Users** — `username` and `email` have unique indexes so two accounts cannot
   share either. Only a hash of the password is stored, never the password
