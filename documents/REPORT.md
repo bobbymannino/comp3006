@@ -1,6 +1,7 @@
 ---
 title: "COMP3006: Full-Stack Development Report 2026/27"
 author: "Bobby Mannino"
+company: "University of Plymouth, Student Number 10878582"
 ---
 
 ## Links
