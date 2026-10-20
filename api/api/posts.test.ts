@@ -1,3 +1,4 @@
+import { expect, describe, it, beforeAll } from "@jest/globals";
 import * as v from "valibot";
 import { loadEnv } from "../env.ts";
 import { PostSchema, PostsSchema } from "../schemas.ts";
@@ -21,34 +22,37 @@ describe("GET /api/posts", () => {
   });
 
   it("returns a list of posts matching the post schema", () => {
-    const result = v.safeParse(PostsSchema, body);
+    const result = v.safeParse(v.array(v.omit(PostSchema, ["authorId"])), body);
 
     expect(result.issues && v.flatten(result.issues)).toBeUndefined();
     expect(result.success).toBe(true);
+    if (result.success) {
+      expect(res.headers.get("x-total-count")).toBe(result.output.length.toString());
+    }
   });
 
   it("returns the seeded posts", () => {
-    const posts = v.parse(PostsSchema, body);
+    const posts = v.parse(v.array(v.omit(PostSchema, ["authorId"])), body);
 
     expect(posts.length).toBeGreaterThan(0);
   });
 
   it("returns each post once", () => {
-    const posts = v.parse(PostsSchema, body);
+    const posts = v.parse(v.array(v.omit(PostSchema, ["authorId"])), body);
     const ids = posts.map((post) => post._id);
 
     expect(new Set(ids).size).toBe(ids.length);
   });
 
   it("returns unique slugs", () => {
-    const posts = v.parse(PostsSchema, body);
+    const posts = v.parse(v.array(v.omit(PostSchema, ["authorId"])), body);
     const slugs = posts.map((post) => post.slug);
 
     expect(new Set(slugs).size).toBe(slugs.length);
   });
 
   it("rejects posts with unknown fields", () => {
-    const [post] = v.parse(PostsSchema, body);
+    const [post] = v.parse(v.array(v.omit(PostSchema, ["authorId"])), body);
     const result = v.safeParse(PostSchema, { ...post, passwordHash: "leaked" });
 
     expect(result.success).toBe(false);
