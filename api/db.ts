@@ -1,11 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { connect, model, Schema } from "mongoose";
-import { config } from "dotenv";
+import { load_env } from "./env.ts";
 
-// Loads env variables
-config({ path: "../.env" });
-
-const url = `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}?authSource=admin`;
+const env = load_env();
+const url = `mongodb://${env.MONGO_USER}:${env.MONGO_PASS}@${env.MONGO_HOST}:${env.MONGO_PORT}/${env.MONGO_DB}?authSource=admin`;
 
 /** The MongoDB connection */
 export const db = await connect(url);
