@@ -1,7 +1,7 @@
 import { expect, describe, it, beforeAll } from "@jest/globals";
 import * as v from "valibot";
 import { loadEnv } from "../env.ts";
-import { PostSchema, PostsSchema } from "../schemas.ts";
+import { PostSchema } from "../schemas.ts";
 
 // Expects the API to already be running, e.g. via `npm run dev`
 const env = loadEnv();
@@ -56,5 +56,34 @@ describe("GET /api/posts", () => {
     const result = v.safeParse(PostSchema, { ...post, passwordHash: "leaked" });
 
     expect(result.success).toBe(false);
+  });
+});
+
+describe("POST /api/posts", () => {
+  let res: Response;
+  let body: unknown;
+  const postBody = {
+    title: "Test Post, Hi There",
+    authorId: "e73bbf43-360b-46f1-aab0-041ac132ef9f",
+    slug: "test-post-hi-there",
+    content: "Just some text here",
+  };
+
+  beforeAll(async () => {
+    res = await fetch(`${baseUrl}/api/posts`, {
+      method: "POST",
+      body: JSON.stringify(postBody),
+    });
+    body = await res.json();
+  });
+
+  it("responds with 201 and JSON", () => {
+    expect(res.status).toBe(201);
+    expect(res.headers.get("content-type")).toMatch(/^application\/json/);
+  });
+
+  it("responds with a new post ID", () => {
+    const response = v.safeParse(v.strictObject({ _id: v.string() }), body);
+    expect(response.success).toBe(true);
   });
 });
