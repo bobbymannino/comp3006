@@ -1,0 +1,27 @@
+{
+  "name": "comp3006",
+  "version": "1.0.0",
+  "description": "This repo contains the source code, documentation and test procedures for all of my (Bobby Mannino) COMP3006 work.",
+  "homepage": "https://github.com/bobbymannino/comp3006#readme",
+  "bugs": {
+    "url": "https://github.com/bobbymannino/comp3006/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bobbymannino/comp3006.git"
+  },
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch index.ts"
+  },
+  "dependencies": {
+    "mongoose": "^9.11.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "oxfmt": "^0.74.0",
+    "oxlint": "^1.89.0",
+    "typescript": "^7.0.2"
+  }
+}
