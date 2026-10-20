@@ -186,8 +186,6 @@ Table: API Endpoints
 
 ## Testing
 
-Testing will be split into 2 categories: isolated and holistic.
-
 ### Isolated Testing
 
 This testing will be isolated to each image, for instance API testing will be

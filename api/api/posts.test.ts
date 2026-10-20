@@ -1,10 +1,10 @@
 import * as v from "valibot";
-import { loadEnv } from "./env.ts";
-import { PostSchema, PostsSchema } from "./schemas.ts";
+import { loadEnv } from "../env.ts";
+import { PostSchema, PostsSchema } from "../schemas.ts";
 
 // Expects the API to already be running, e.g. via `npm run dev`
 const env = loadEnv();
-const baseUrl = env.API_URL ?? `http://localhost:${env.PORT}`;
+const baseUrl = `http://localhost:${env.PORT}`;
 
 describe("GET /api/posts", () => {
   let res: Response;

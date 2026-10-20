@@ -1,6 +1,6 @@
-import { createServer, IncomingMessage, ServerResponse } from "node:http";
+import { createServer } from "node:http";
 import { logger } from "./log.ts";
-import { posts } from "./db.ts";
+import { handleGetPosts } from "./api/posts.ts";
 
 const log = logger("api");
 
@@ -32,14 +32,3 @@ const API_ENDPOINTS = {
     "/api/posts": handleGetPosts,
   },
 };
-
-async function handleGetPosts(
-  req: IncomingMessage,
-  res: ServerResponse<IncomingMessage>,
-  url: URL,
-) {
-  const _posts = await posts.find();
-
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(JSON.stringify(_posts));
-}
