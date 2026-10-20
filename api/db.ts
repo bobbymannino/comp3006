@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { logger } from "./log.ts";
 import { connect, model, Schema } from "mongoose";
-import { load_env } from "./env.ts";
+import { loadEnv } from "./env.ts";
 
-const env = load_env();
+const env = loadEnv();
 const log = logger("db");
 const url = `mongodb://${env.MONGO_USER}:${env.MONGO_PASS}@${env.MONGO_HOST}:${env.MONGO_PORT}/${env.MONGO_DB}?authSource=admin`;
 
