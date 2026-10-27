@@ -1,14 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { logger } from "./log.ts";
 import { connect, model, Schema } from "mongoose";
-import { loadEnv } from "./env.ts";
+import { mongoUrl } from "./env.ts";
 
-const env = loadEnv();
 const log = logger("db");
-const url = `mongodb://${env.MONGO_USER}:${env.MONGO_PASS}@${env.MONGO_HOST}:${env.MONGO_PORT}/${env.MONGO_DB}?authSource=admin`;
 
 /** The MongoDB connection */
-export const db = await connect(url);
+export const db = await connect(mongoUrl());
 
 // Mirrors the validators in mongo/init/01-schema.js, which reject unknown
 // fields, so `__v` is disabled on every schema
