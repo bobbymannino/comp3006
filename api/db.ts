@@ -62,6 +62,31 @@ const likeSchema = new Schema(
 
 likeSchema.index({ userId: 1, postId: 1 }, { unique: true });
 
+/** How long a session lasts by default: 3 days */
+export const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 3;
+
+const sessionSchema = new Schema(
+  {
+    _id: id,
+    userId: { type: Schema.Types.UUID, ref: "User", required: true },
+    tokenHash: {
+      type: String,
+      required: true,
+      unique: true,
+      match: /^[a-f0-9]{64}$/,
+    },
+    expiresAt: {
+      type: Date,
+      required: true,
+      default: () => new Date(Date.now() + SESSION_TTL_MS),
+    },
+  },
+  { timestamps: { createdAt: true, updatedAt: false }, versionKey: false },
+);
+
+sessionSchema.index({ userId: 1 });
+sessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
 /** Users collection */
 export const User = model("User", userSchema);
 /** Users collection */
@@ -74,5 +99,9 @@ export const posts = db.model("Post", Post.schema);
 export const Like = model("Like", likeSchema);
 /** Likes collection */
 export const likes = db.model("Like", Like.schema);
+/** Sessions collection */
+export const Session = model("Session", sessionSchema);
+/** Sessions collection */
+export const sessions = db.model("Session", Session.schema);
 
 log.info("Loaded database");
