@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { expect, describe, it } from "@jest/globals";
 import * as v from "valibot";
-import { UserSchema } from "../schemas.ts";
+import { SessionSchema, UserSchema } from "../schemas.ts";
 import {
   createPost,
   createPublishedPost,
@@ -13,6 +13,55 @@ import {
   uniqueId,
   useUsers,
 } from "../test-utils.ts";
+
+describe("POST /api/auth/login", () => {
+  const users = useUsers("user");
+
+  it("responds with 201 and a session token", async () => {
+    const res = await login(users.user);
+
+    expect(res.status).toBe(201);
+    expect(res.headers.get("content-type")).toMatch(/^application\/json/);
+    expect(v.safeParse(SessionSchema, res.body).success).toBe(true);
+  });
+
+  it("gives a token that authorizes the user", async () => {
+    const { token } = v.parse(SessionSchema, (await login(users.user)).body);
+    const res = await request("PUT", `/users/${users.user._id}`, { body: {}, as: { token } });
+
+    expect(res.status).toBe(200);
+  });
+
+  it("gives a new token for each login", async () => {
+    const [first, second] = await Promise.all([login(users.user), login(users.user)]);
+
+    expect(v.parse(SessionSchema, first.body).token).not.toBe(
+      v.parse(SessionSchema, second.body).token,
+    );
+  });
+
+  it("rejects a wrong password", async () => {
+    const res = await login({ ...users.user, password: "wrong-password" });
+
+    expect(res.status).toBe(401);
+  });
+
+  it("rejects a username that does not exist", async () => {
+    const res = await login({ username: `missing_${uniqueId()}`, password: "password" });
+
+    expect(res.status).toBe(401);
+  });
+
+  it.each([
+    ["a missing username", { password: "password" }],
+    ["a missing password", { username: "someone" }],
+    ["unknown fields", { username: "someone", password: "password", admin: true }],
+  ])("rejects %s", async (_, body) => {
+    const res = await request("POST", "/auth/login", { body });
+
+    expect(res.status).toBe(400);
+  });
+});
 
 describe("PUT /api/users/:id", () => {
   const users = useUsers("user", "other");
