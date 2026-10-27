@@ -173,7 +173,6 @@ so the `FK` fields are references the API is responsible for keeping valid.
 
 | Method | Path               | Action                           | Requires Bearer |
 | ------ | ------------------ | -------------------------------- | --------------- |
-| POST   | `/users`           | Create a new user                | N               |
 | PUT    | `/users/:id`       | Update a user by id              | Y               |
 | DELETE | `/users/:id`       | Delete a user                    | Y               |
 | GET    | `/posts`           | Get all posts                    | N               |
