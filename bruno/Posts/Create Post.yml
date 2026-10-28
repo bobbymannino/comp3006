@@ -15,6 +15,14 @@ http:
       }
   auth: inherit
 
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.status == 201) {
+          bru.setVar("postId", res.body._id);
+        }
+
 settings:
   encodeUrl: true
   timeout: 0

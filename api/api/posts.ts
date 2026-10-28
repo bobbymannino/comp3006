@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import * as v from "valibot";
 import type { AuthResponse } from "../auth.ts";
-import { isDuplicateKeyError, posts } from "../db.ts";
+import { isDuplicateKeyError, likes, posts } from "../db.ts";
 import { PostSchema } from "../schemas.ts";
 
 const POSTS_PER_PAGE = 12;
@@ -44,4 +44,24 @@ export async function handleGetPost(req: Request<{ id: string }>, res: Response)
 
 export async function handleUpdatePost(req: Request<{ id: string }>, res: AuthResponse) {}
 
-export async function handleDeletePost(req: Request<{ id: string }>, res: AuthResponse) {}
+export async function handleDeletePost(req: Request<{ id: string }>, res: AuthResponse) {
+  // An ID that is not a UUID cannot match a post, and would fail to cast
+  const id = req.params.id.toLowerCase();
+  const post = v.is(PostSchema.entries._id, id) ? await posts.findById(id, "authorId") : null;
+  if (!post) {
+    res.status(404).json({ status: 404, error: "That post does not exist." });
+    return;
+  }
+
+  if (post.authorId.toString() !== res.locals.user._id.toString()) {
+    res.status(403).json({ status: 403, error: "You can only delete your own posts." });
+    return;
+  }
+
+  // The post is deleted last: if a step fails it still exists and deleting can
+  // be retried
+  await likes.deleteMany({ postId: post._id });
+  await posts.deleteOne({ _id: post._id });
+
+  res.status(204).end();
+}
