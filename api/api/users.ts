@@ -22,6 +22,9 @@ const SignupBodySchema = v.strictObject({
   displayName: UserSchema.entries.displayName,
 });
 
+/** Every field is optional, so only the fields given are changed */
+const UpdateBodySchema = v.partial(SignupBodySchema);
+
 const LoginBodySchema = v.strictObject({
   username: v.string(),
   password: v.string(),
@@ -73,7 +76,43 @@ export async function handleLoginUser(req: Request, res: Response) {
   res.status(201).json(session);
 }
 
-export async function handleUpdateUser(req: Request<{ id: string }>, res: AuthResponse) {}
+export async function handleUpdateUser(req: Request<{ id: string }>, res: AuthResponse) {
+  // User ID from the URL
+  const id = req.params.id.toLowerCase();
+  // User ID from the bearer token
+  const self = res.locals.user;
+
+  if (id !== self._id.toString()) {
+    res.status(403).json({ status: 403, error: "You can only update your own account." });
+    return;
+  }
+
+  const body = v.safeParse(UpdateBodySchema, req.body);
+  if (!body.success) {
+    res.status(400).json({ status: 400, error: v.summarize(body.issues) });
+    return;
+  }
+
+  const { password, ...details } = body.output;
+  const updatedFields = password
+    ? { ...details, passwordHash: await hash(password, { cost: BCRYPT_COST }) }
+    : details;
+  try {
+    const user = await users.findByIdAndUpdate(self._id, updatedFields, {
+      // Tell Mongoose to omit the password hash from the response
+      projection: "-passwordHash",
+      returnDocument: "after",
+      runValidators: true,
+    });
+    res.status(200).json(user);
+  } catch (error) {
+    if (!isDuplicateKeyError(error)) throw error;
+    res.status(409).json({
+      status: 409,
+      error: "That username or email is already taken.",
+    });
+  }
+}
 
 export async function handleDeleteUser(req: Request<{ id: string }>, res: AuthResponse) {
   // User ID from the URL
