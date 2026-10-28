@@ -1,0 +1,14 @@
+name: Dev
+variables:
+  - name: baseUrl
+    value: http://localhost:3000/api
+    description: The base URL the API is running on.
+  - name: email
+    value: manninobobby@icloud.com
+    description: ""
+  - name: username
+    value: bobbymannino
+    description: ""
+  - name: password
+    value: password
+    description: ""
