@@ -12,6 +12,10 @@ const CreateBodySchema = v.strictObject({
   content: v.optional(PostSchema.entries.content),
 });
 
+const UpdateBodySchema = v.partial(
+  v.strictObject({ ...CreateBodySchema.entries, published: v.boolean() }),
+);
+
 export async function handleGetPosts(req: Request, res: Response) {
   let page = Number.parseInt(String(req.query.page ?? "1"));
   page = Number.isNaN(page) ? 1 : Math.max(page, 1);
@@ -42,21 +46,40 @@ export async function handleCreatePost(req: Request, res: AuthResponse) {
 
 export async function handleGetPost(req: Request<{ id: string }>, res: Response) {}
 
-export async function handleUpdatePost(req: Request<{ id: string }>, res: AuthResponse) {}
+export async function handleUpdatePost(req: Request<{ id: string }>, res: AuthResponse) {
+  const post = await findOwnPost(req, res, "update");
+  // Response has been set within the above function so return just consumes it
+  if (!post) return;
+
+  const body = v.safeParse(UpdateBodySchema, req.body);
+  if (!body.success) {
+    res.status(400).json({ status: 400, error: v.summarize(body.issues) });
+    return;
+  }
+
+  // Publishing again keeps the original publish date
+  const { published, ...details } = body.output;
+  const update =
+    published === undefined
+      ? details
+      : { ...details, publishedAt: published ? (post.publishedAt ?? new Date()) : null };
+
+  try {
+    const updated = await posts.findByIdAndUpdate(post._id, update, {
+      projection: "-authorId",
+      returnDocument: "after",
+      runValidators: true,
+    });
+    res.status(200).json(updated);
+  } catch (error) {
+    if (!isDuplicateKeyError(error)) throw error;
+    res.status(409).json({ status: 409, error: "A post with that slug already exists." });
+  }
+}
 
 export async function handleDeletePost(req: Request<{ id: string }>, res: AuthResponse) {
-  // An ID that is not a UUID cannot match a post, and would fail to cast
-  const id = req.params.id.toLowerCase();
-  const post = v.is(PostSchema.entries._id, id) ? await posts.findById(id, "authorId") : null;
-  if (!post) {
-    res.status(404).json({ status: 404, error: "That post does not exist." });
-    return;
-  }
-
-  if (post.authorId.toString() !== res.locals.user._id.toString()) {
-    res.status(403).json({ status: 403, error: "You can only delete your own posts." });
-    return;
-  }
+  const post = await findOwnPost(req, res, "delete");
+  if (!post) return;
 
   // The post is deleted last: if a step fails it still exists and deleting can
   // be retried
@@ -64,4 +87,27 @@ export async function handleDeletePost(req: Request<{ id: string }>, res: AuthRe
   await posts.deleteOne({ _id: post._id });
 
   res.status(204).end();
+}
+
+/**
+ * Find the post in the URL if it belongs to the logged in user, otherwise
+ * respond with a 404 or 403 and return null
+ */
+async function findOwnPost(req: Request<{ id: string }>, res: AuthResponse, action: string) {
+  // An ID that is not a UUID cannot match a post, and would fail to cast
+  const id = req.params.id.toLowerCase();
+  const post = v.is(PostSchema.entries._id, id)
+    ? await posts.findById(id, "authorId publishedAt")
+    : null;
+  if (!post) {
+    res.status(404).json({ status: 404, error: "That post does not exist." });
+    return null;
+  }
+
+  if (post.authorId.toString() !== res.locals.user._id.toString()) {
+    res.status(403).json({ status: 403, error: `You can only ${action} your own posts.` });
+    return null;
+  }
+
+  return post;
 }
