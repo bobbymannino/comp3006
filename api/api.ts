@@ -1,4 +1,5 @@
 import express from "express";
+import { requireAuth } from "./auth.ts";
 import { logger } from "./log.ts";
 import {
   handleCreatePost,
@@ -23,19 +24,19 @@ export function createApiServer(port: number) {
 
   // Posts
   app.get("/api/posts", handleGetPosts);
-  app.post("/api/posts", handleCreatePost);
+  app.post("/api/posts", requireAuth, handleCreatePost);
   app.get("/api/posts/:id", handleGetPost);
-  app.put("/api/posts/:id", handleUpdatePost);
-  app.delete("/api/posts/:id", handleDeletePost);
+  app.put("/api/posts/:id", requireAuth, handleUpdatePost);
+  app.delete("/api/posts/:id", requireAuth, handleDeletePost);
   // Likes
-  app.post("/api/posts/:id/likes", handleCreateLike);
-  app.delete("/api/posts/:id/likes", handleDeleteLike);
+  app.post("/api/posts/:id/likes", requireAuth, handleCreateLike);
+  app.delete("/api/posts/:id/likes", requireAuth, handleDeleteLike);
   // Auth
   app.post("/api/auth/signup", handleCreateUser);
   app.post("/api/auth/login", handleLoginUser);
   // Users
-  app.put("/api/users/:id", handleUpdateUser);
-  app.delete("/api/users/:id", handleDeleteUser);
+  app.put("/api/users/:id", requireAuth, handleUpdateUser);
+  app.delete("/api/users/:id", requireAuth, handleDeleteUser);
 
   app.use((_req, res) => {
     res.status(404).json({
