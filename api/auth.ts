@@ -1,3 +1,5 @@
+import { randomBytes } from "node:crypto";
+import type { Types } from "mongoose";
 import type { NextFunction, Request, Response } from "express";
 import { sessions, users } from "./db.ts";
 import { sha256 } from "./sha.ts";
@@ -12,6 +14,16 @@ export type AuthResponse = Response<unknown, { user: AuthUser }>;
 function bearerToken(req: Request) {
   const match = req.get("Authorization")?.match(/^Bearer\s+(\S+)$/i);
   return match?.[1];
+}
+
+/**
+ * Start a new session for a user. Only a hash of the token is stored, so the
+ * returned token is the only copy of it
+ */
+export async function createSession(userId: Types.UUID) {
+  const token = randomBytes(32).toString("base64url");
+  const session = await sessions.create({ userId, tokenHash: await sha256(token) });
+  return { token, expiresAt: session.expiresAt };
 }
 
 /** Find the user a session token belongs to, ignoring expired sessions */
