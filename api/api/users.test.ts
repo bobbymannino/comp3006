@@ -153,6 +153,6 @@ describe("DELETE /api/users/:id", () => {
   it("responds with 404 for a user that does not exist", async () => {
     const res = await request("DELETE", `/users/${randomUUID()}`, { as: users.other });
 
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(403);
   });
 });

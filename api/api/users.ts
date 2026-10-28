@@ -2,7 +2,7 @@ import type { Response, Request } from "express";
 import { hash, verify } from "@node-rs/bcrypt";
 import * as v from "valibot";
 import { createSession, type AuthResponse } from "../auth.ts";
-import { isDuplicateKeyError, users } from "../db.ts";
+import { isDuplicateKeyError, likes, posts, sessions, users } from "../db.ts";
 import { UserSchema } from "../schemas.ts";
 
 /** The bcrypt cost to hash passwords with, matching the seeded users */
@@ -75,4 +75,32 @@ export async function handleLoginUser(req: Request, res: Response) {
 
 export async function handleUpdateUser(req: Request<{ id: string }>, res: AuthResponse) {}
 
-export async function handleDeleteUser(req: Request<{ id: string }>, res: AuthResponse) {}
+export async function handleDeleteUser(req: Request<{ id: string }>, res: AuthResponse) {
+  // User ID from the URL
+  const id = req.params.id.toLowerCase();
+  // User ID from the bearer token
+  const self = res.locals.user;
+
+  if (id !== self._id.toString()) {
+    res.status(403).json({ status: 403, error: "You can only delete your own account." });
+    return;
+  }
+
+  // There is no transaction on a standalone MongoDB, so the user is deleted
+  // last: if a step fails the account still exists and deleting can be retried
+  await sessions.deleteMany({ userId: self._id });
+
+  const given = await likes.find({ userId: self._id }, "postId");
+  await posts.updateMany(
+    { _id: { $in: given.map((like) => like.postId) } },
+    { $inc: { likeCount: -1 } },
+  );
+  await likes.deleteMany({ userId: self._id });
+
+  const authored = await posts.find({ authorId: self._id }, "_id");
+  await likes.deleteMany({ postId: { $in: authored.map((post) => post._id) } });
+  await posts.deleteMany({ authorId: self._id });
+
+  await users.deleteOne({ _id: self._id });
+  res.status(204).end();
+}

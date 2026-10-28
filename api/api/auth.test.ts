@@ -124,6 +124,7 @@ describe("POST /api/auth/login", () => {
   });
 });
 
+// These endpoints require a bearer token
 describe("unauthorized requests", () => {
   // Auth is checked before the route looks anything up, so the IDs need not exist
   const id = randomUUID();
