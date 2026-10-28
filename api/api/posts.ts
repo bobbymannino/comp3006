@@ -13,3 +13,11 @@ export async function handleGetPosts(req: Request, res: Response) {
 
   res.set("X-Total-Count", _posts.length.toString()).status(200).json(_posts);
 }
+
+export async function handleCreatePost(req: Request, res: Response) {}
+
+export async function handleGetPost(req: Request<{ id: number }>, res: Response) {}
+
+export async function handleUpdatePost(req: Request<{ id: number }>, res: Response) {}
+
+export async function handleDeletePost(req: Request<{ id: number }>, res: Response) {}

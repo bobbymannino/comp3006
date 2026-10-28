@@ -1,6 +1,13 @@
 import express from "express";
 import { logger } from "./log.ts";
-import { handleGetPosts } from "./api/posts.ts";
+import {
+  handleCreatePost,
+  handleDeletePost,
+  handleGetPost,
+  handleGetPosts,
+  handleUpdatePost,
+} from "./api/posts.ts";
+import { handleCreateLike, handleDeleteLike } from "./api/likes.ts";
 import {
   handleCreateUser,
   handleDeleteUser,
@@ -16,6 +23,13 @@ export function createApiServer(port: number) {
 
   // Posts
   app.get("/api/posts", handleGetPosts);
+  app.post("/api/posts", handleCreatePost);
+  app.get("/api/posts/:id", handleGetPost);
+  app.put("/api/posts/:id", handleUpdatePost);
+  app.delete("/api/posts/:id", handleDeletePost);
+  // Likes
+  app.post("/api/posts/:id/likes", handleCreateLike);
+  app.delete("/api/posts/:id/likes", handleDeleteLike);
   // Auth
   app.post("/api/auth/signup", handleCreateUser);
   app.post("/api/auth/login", handleLoginUser);
