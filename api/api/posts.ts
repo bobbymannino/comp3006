@@ -19,7 +19,9 @@ const UpdateBodySchema = v.partial(
 export async function handleGetPosts(req: Request, res: Response) {
   let page = Number.parseInt(String(req.query.page ?? "1"));
   page = Number.isNaN(page) ? 1 : Math.max(page, 1);
+  // Newest first, with the ID breaking ties so pages never overlap
   const _posts = await posts.find({ publishedAt: { $ne: null } }, "-authorId", {
+    sort: { publishedAt: -1, _id: -1 },
     limit: POSTS_PER_PAGE,
     skip: (page - 1) * POSTS_PER_PAGE,
   });
