@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { expect, describe, it, afterAll } from "@jest/globals";
 import * as v from "valibot";
 import { SessionSchema, SignupSchema } from "../schemas.ts";
@@ -120,5 +121,35 @@ describe("POST /api/auth/login", () => {
     const res = await request("POST", "/auth/login", { body });
 
     expect(res.status).toBe(400);
+  });
+});
+
+describe("unauthorized requests", () => {
+  // Auth is checked before the route looks anything up, so the IDs need not exist
+  const id = randomUUID();
+  const routes = [
+    ["POST", "/posts"],
+    ["PUT", `/posts/${id}`],
+    ["DELETE", `/posts/${id}`],
+    ["POST", `/posts/${id}/likes`],
+    ["DELETE", `/posts/${id}/likes`],
+    ["PUT", `/users/${id}`],
+    ["DELETE", `/users/${id}`],
+  ];
+  const credentials: [string, Record<string, string>][] = [
+    ["no Authorization header", {}],
+    ["an invalid token", { Authorization: "Bearer not-a-real-token" }],
+    ["a non-bearer scheme", { Authorization: "Basic dXNlcjpwYXNzd29yZA==" }],
+    ["a bearer header with no token", { Authorization: "Bearer " }],
+  ];
+
+  describe.each(routes)("%s /api%s", (method, path) => {
+    it.each(credentials)("responds with 401 for %s", async (_, headers) => {
+      const res = await request(method, path, { body: {}, headers });
+
+      expect(res.status).toBe(401);
+      expect(res.headers.get("content-type")).toMatch(/^application\/json/);
+      expect(res.body).toEqual({ status: 401, error: expect.any(String) });
+    });
   });
 });
