@@ -5,6 +5,8 @@ import { isDuplicateKeyError, likes, posts } from "../db.ts";
 import { PostSchema } from "../schemas.ts";
 
 const POSTS_PER_PAGE = 12;
+/** How many words of each post's content the list of posts shows */
+const PREVIEW_WORDS = 50;
 
 const CreateBodySchema = v.strictObject({
   title: PostSchema.entries.title,
@@ -26,7 +28,17 @@ export async function handleGetPosts(req: Request, res: Response) {
     skip: (page - 1) * POSTS_PER_PAGE,
   });
 
-  res.set("X-Total-Count", _posts.length.toString()).status(200).json(_posts);
+  // The list only needs a preview, the full content comes from a single post
+  const previews = _posts.map((post) => ({ ...post.toJSON(), content: preview(post.content) }));
+
+  res.set("X-Total-Count", previews.length.toString()).status(200).json(previews);
+}
+
+/** Cut text down to its first `PREVIEW_WORDS` words, ending with an ellipsis if cut */
+function preview(text: string) {
+  const words = text.trim().split(/\s+/);
+  if (words.length <= PREVIEW_WORDS) return text;
+  return `${words.slice(0, PREVIEW_WORDS).join(" ")}…`;
 }
 
 export async function handleCreatePost(req: Request, res: AuthResponse) {
