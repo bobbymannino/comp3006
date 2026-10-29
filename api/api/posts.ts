@@ -3,21 +3,10 @@ import * as v from "valibot";
 import type { AuthResponse, OptionalAuthResponse } from "../auth.ts";
 import { isDuplicateKeyError, likes, posts } from "../db.ts";
 import { broadcastPost } from "../live.ts";
-import { PostSchema } from "../schemas.ts";
+import { CreatePostBodySchema, PostSchema, UpdatePostBodySchema } from "../schemas.ts";
+import { preview } from "../text.ts";
 
 const POSTS_PER_PAGE = 12;
-/** How many words of each post's content the list of posts shows */
-const PREVIEW_WORDS = 50;
-
-const CreateBodySchema = v.strictObject({
-  title: PostSchema.entries.title,
-  slug: PostSchema.entries.slug,
-  content: v.optional(PostSchema.entries.content),
-});
-
-const UpdateBodySchema = v.partial(
-  v.strictObject({ ...CreateBodySchema.entries, published: v.boolean() }),
-);
 
 export async function handleGetPosts(req: Request, res: Response) {
   let page = Number.parseInt(String(req.query.page ?? "1"));
@@ -35,15 +24,8 @@ export async function handleGetPosts(req: Request, res: Response) {
   res.set("X-Total-Count", previews.length.toString()).status(200).json(previews);
 }
 
-/** Cut text down to its first `PREVIEW_WORDS` words, ending with an ellipsis if cut */
-function preview(text: string) {
-  const words = text.trim().split(/\s+/);
-  if (words.length <= PREVIEW_WORDS) return text;
-  return `${words.slice(0, PREVIEW_WORDS).join(" ")}…`;
-}
-
 export async function handleCreatePost(req: Request, res: AuthResponse) {
-  const body = v.safeParse(CreateBodySchema, req.body);
+  const body = v.safeParse(CreatePostBodySchema, req.body);
   if (!body.success) {
     res.status(400).json({ status: 400, error: v.summarize(body.issues) });
     return;
@@ -85,7 +67,7 @@ export async function handleUpdatePost(req: Request<{ id: string }>, res: AuthRe
   // Response has been set within the above function so return just consumes it
   if (!post) return;
 
-  const body = v.safeParse(UpdateBodySchema, req.body);
+  const body = v.safeParse(UpdatePostBodySchema, req.body);
   if (!body.success) {
     res.status(400).json({ status: 400, error: v.summarize(body.issues) });
     return;

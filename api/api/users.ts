@@ -3,7 +3,7 @@ import { hash, verify } from "@node-rs/bcrypt";
 import * as v from "valibot";
 import { createSession, type AuthResponse } from "../auth.ts";
 import { isDuplicateKeyError, likes, posts, sessions, users } from "../db.ts";
-import { UserSchema } from "../schemas.ts";
+import { LoginBodySchema, SignupBodySchema, UpdateUserBodySchema } from "../schemas.ts";
 
 /** The bcrypt cost to hash passwords with, matching the seeded users */
 const BCRYPT_COST = 10;
@@ -14,21 +14,6 @@ const BCRYPT_COST = 10;
  * This is a security feature I learned from my placement last year.
  */
 const DUMMY_HASH = await hash("dummy-password", { cost: BCRYPT_COST });
-
-const SignupBodySchema = v.strictObject({
-  username: UserSchema.entries.username,
-  email: UserSchema.entries.email,
-  password: v.pipe(v.string(), v.minLength(1)),
-  displayName: UserSchema.entries.displayName,
-});
-
-/** Every field is optional, so only the fields given are changed */
-const UpdateBodySchema = v.partial(SignupBodySchema);
-
-const LoginBodySchema = v.strictObject({
-  username: v.string(),
-  password: v.string(),
-});
 
 export async function handleCreateUser(req: Request, res: Response) {
   const body = v.safeParse(SignupBodySchema, req.body);
@@ -87,7 +72,7 @@ export async function handleUpdateUser(req: Request<{ id: string }>, res: AuthRe
     return;
   }
 
-  const body = v.safeParse(UpdateBodySchema, req.body);
+  const body = v.safeParse(UpdateUserBodySchema, req.body);
   if (!body.success) {
     res.status(400).json({ status: 400, error: v.summarize(body.issues) });
     return;

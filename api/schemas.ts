@@ -48,3 +48,35 @@ export const SignupSchema = v.strictObject({
   ...CreatedSchema.entries,
   ...SessionSchema.entries,
 });
+
+// Request bodies. These are strict so unknown fields, such as `passwordHash`
+// or `likeCount`, are rejected rather than written to the database
+
+/** The body to sign up with */
+export const SignupBodySchema = v.strictObject({
+  username: UserSchema.entries.username,
+  email: UserSchema.entries.email,
+  password: v.pipe(v.string(), v.minLength(1)),
+  displayName: UserSchema.entries.displayName,
+});
+
+/** The body to update a user with. Every field is optional, so only the fields given are changed */
+export const UpdateUserBodySchema = v.partial(SignupBodySchema);
+
+/** The body to log in with */
+export const LoginBodySchema = v.strictObject({
+  username: v.string(),
+  password: v.string(),
+});
+
+/** The body to create a post with. Posts start unpublished */
+export const CreatePostBodySchema = v.strictObject({
+  title: PostSchema.entries.title,
+  slug: PostSchema.entries.slug,
+  content: v.optional(PostSchema.entries.content),
+});
+
+/** The body to update a post with, which can also publish or unpublish it */
+export const UpdatePostBodySchema = v.partial(
+  v.strictObject({ ...CreatePostBodySchema.entries, published: v.boolean() }),
+);
