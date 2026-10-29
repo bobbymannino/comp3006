@@ -227,14 +227,15 @@ _TODO_
 
 ## Continuous Integration/Deployment
 
-Using GitHub's built in automations platform
-[Actions](https://github.com/features/actions), I will add in automatic testing
-along with automated Docker image creation. The image creation will only apply
-to the **web UI and API** images.
+Using GitHub's automation platform **Actions**[^gh-actions], I will add in
+continuous testing along with automated Docker image creation. The image
+creation will only apply to the **web UI and API** images.
 
 ## Evaluation
 
 _TODO_
+
+[^gh-actions]: <https://github.com/features/actions>
 
 [^mongo-init]:
     <https://www.mongodb.com/docs/atlas/cli/current/atlas-cli-docker-compose#initialization>
