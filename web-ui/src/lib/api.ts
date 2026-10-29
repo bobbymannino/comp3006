@@ -59,6 +59,11 @@ export function login(body: v.InferInput<typeof LoginBodySchema>) {
 /** A post as shown publicly, with its content cut down to a preview in lists */
 export type PublicPost = v.InferOutput<typeof PublicPostSchema>;
 
+/** The header to send a session token with, if there is one */
+function auth(token?: string): HeadersInit {
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 /** Get a page of published posts, newest first. Pages start at 1 */
 export function getPosts(page = 1) {
   return request<PublicPost[]>(`/api/posts?page=${page}`);
@@ -70,6 +75,6 @@ export function getPosts(page = 1) {
  */
 export function getPost(id: string, token?: string) {
   return request<PublicPost>(`/api/posts/${encodeURIComponent(id)}`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    headers: auth(token),
   });
 }
