@@ -18,7 +18,7 @@ export function PostPreviewCard({ post }: { post: PublicPost }) {
       <CardHeader>
         <CardTitle>
           <Link
-            href={`/posts/${post.slug}`}
+            href={`/posts/${post._id}`}
             className="after:absolute after:inset-0"
           >
             {post.title}

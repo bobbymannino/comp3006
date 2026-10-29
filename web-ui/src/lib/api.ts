@@ -63,3 +63,13 @@ export type PublicPost = v.InferOutput<typeof PublicPostSchema>;
 export function getPosts(page = 1) {
   return request<PublicPost[]>(`/api/posts?page=${page}`);
 }
+
+/**
+ * Get a single post by its ID. Authors can also see their unpublished posts,
+ * so their token is sent when logged in
+ */
+export function getPost(id: string, token?: string) {
+  return request<PublicPost>(`/api/posts/${encodeURIComponent(id)}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+}
