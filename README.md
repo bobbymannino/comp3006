@@ -22,7 +22,7 @@ docker run --rm \
     -e MONGO_HOST=host.docker.internal \
     -e MONGO_PORT=6001 \
     -e MONGO_DB=bloggy \
-    comp3006-api
+    bobbymannino/comp3006-api
 ```
 
 > [!NOTE]

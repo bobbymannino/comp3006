@@ -231,6 +231,9 @@ Using GitHub's automation platform **Actions**[^gh-actions], I will add in
 continuous testing along with automated Docker image creation. The image
 creation will only apply to the **web UI and API** images.
 
+The latest version of the API and web UI images are available on Docker Hub:
+<https://hub.docker.com/r/bobbymannino>.
+
 ## Evaluation
 
 _TODO_
