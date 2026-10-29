@@ -12,10 +12,22 @@ export function Header() {
           <Image src={logo} alt="" className="size-6" priority />
           Bloggy
         </Link>
-        <Link href="/signup" className={buttonVariants()}>
-          Sign up
-        </Link>
+        <nav className="flex items-center gap-2">{NavAnon()}</nav>
       </div>
     </header>
+  );
+}
+
+/** Logged out header nav */
+function NavAnon() {
+  return (
+    <>
+      <Link href="/login" className={buttonVariants({ variant: "ghost" })}>
+        Log in
+      </Link>
+      <Link href="/signup" className={buttonVariants()}>
+        Sign up
+      </Link>
+    </>
   );
 }

@@ -1,6 +1,11 @@
 import type * as v from "valibot";
 // Type-only, so none of the API's code ends up in the web UI
-import type { SignupBodySchema, SignupSchema } from "../../../api/schemas";
+import type {
+  LoginBodySchema,
+  SessionSchema,
+  SignupBodySchema,
+  SignupSchema,
+} from "../../../api/schemas";
 
 /** Where the API is, only used from the server so it is never sent to the browser */
 const API_URL = process.env.API_URL ?? "http://localhost:3001";
@@ -37,6 +42,14 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 /** Create a new user, which also logs them in */
 export function signup(body: v.InferInput<typeof SignupBodySchema>) {
   return request<v.InferOutput<typeof SignupSchema>>("/api/auth/signup", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+/** Log in an existing user, starting a new session */
+export function login(body: v.InferInput<typeof LoginBodySchema>) {
+  return request<v.InferOutput<typeof SessionSchema>>("/api/auth/login", {
     method: "POST",
     body: JSON.stringify(body),
   });

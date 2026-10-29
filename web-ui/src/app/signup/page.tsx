@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -23,6 +25,14 @@ export default function SignupPage() {
         <CardContent>
           <SignupForm />
         </CardContent>
+        <CardFooter className="text-muted-foreground">
+          <p>
+            Already have an account?{" "}
+            <Link href="/login" className="text-foreground underline underline-offset-4">
+              Log in
+            </Link>
+          </p>
+        </CardFooter>
       </Card>
     </main>
   );
