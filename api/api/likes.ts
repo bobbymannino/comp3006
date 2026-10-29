@@ -43,3 +43,23 @@ export async function handleDeleteLike(req: Request<{ id: string }>, res: AuthRe
   await posts.updateOne({ _id: like.postId }, { $inc: { likeCount: -1 } });
   res.status(204).end();
 }
+
+export async function handleGetLike(req: Request<{ id: string }>, res: AuthResponse) {
+  // An ID that is not a UUID cannot match a post, and would fail to cast. As
+  // with getting a post, an unpublished post is only found by its author
+  const id = req.params.id.toLowerCase();
+  const user = res.locals.user;
+  const post = v.is(PostSchema.entries._id, id)
+    ? await posts.findOne(
+        { _id: id, $or: [{ publishedAt: { $ne: null } }, { authorId: user._id }] },
+        "_id",
+      )
+    : null;
+  if (!post) {
+    res.status(404).json({ status: 404, error: "That post does not exist." });
+    return;
+  }
+
+  const liked = (await likes.exists({ userId: user._id, postId: post._id })) !== null;
+  res.status(200).json(liked);
+}

@@ -9,7 +9,7 @@ import {
   handleGetPosts,
   handleUpdatePost,
 } from "./api/posts.ts";
-import { handleCreateLike, handleDeleteLike } from "./api/likes.ts";
+import { handleCreateLike, handleDeleteLike, handleGetLike } from "./api/likes.ts";
 import {
   handleCreateUser,
   handleDeleteUser,
@@ -30,6 +30,7 @@ export function createApiServer(port: number) {
   app.put("/api/posts/:id", requireAuth, handleUpdatePost);
   app.delete("/api/posts/:id", requireAuth, handleDeletePost);
   // Likes
+  app.get("/api/posts/:id/likes", requireAuth, handleGetLike);
   app.post("/api/posts/:id/likes", requireAuth, handleCreateLike);
   app.delete("/api/posts/:id/likes", requireAuth, handleDeleteLike);
   // Auth

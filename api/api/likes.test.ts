@@ -107,3 +107,62 @@ describe("DELETE /api/posts/:id/likes", () => {
     expect(res.status).toBe(404);
   });
 });
+
+describe("GET /api/posts/:id/likes", () => {
+  const users = useUsers("author", "reader");
+
+  it("responds with true when the user has liked the post", async () => {
+    const post = await createPublishedPost(users.author);
+    await request("POST", `/posts/${post._id}/likes`, { as: users.reader });
+    const res = await request("GET", `/posts/${post._id}/likes`, { as: users.reader });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toBe(true);
+  });
+
+  it("responds with false when the user has not liked the post", async () => {
+    const post = await createPublishedPost(users.author);
+    await request("POST", `/posts/${post._id}/likes`, { as: users.author });
+    const res = await request("GET", `/posts/${post._id}/likes`, { as: users.reader });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toBe(false);
+  });
+
+  it("responds with false after the post is unliked", async () => {
+    const post = await createPublishedPost(users.author);
+    await request("POST", `/posts/${post._id}/likes`, { as: users.reader });
+    await request("DELETE", `/posts/${post._id}/likes`, { as: users.reader });
+    const res = await request("GET", `/posts/${post._id}/likes`, { as: users.reader });
+
+    expect(res.body).toBe(false);
+  });
+
+  it("requires auth", async () => {
+    const post = await createPublishedPost(users.author);
+    const res = await request("GET", `/posts/${post._id}/likes`);
+
+    expect(res.status).toBe(401);
+  });
+
+  it("lets the author check their unpublished post", async () => {
+    const post = await createPost(users.author);
+    const res = await request("GET", `/posts/${post._id}/likes`, { as: users.author });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toBe(false);
+  });
+
+  it("responds with 404 for someone else's unpublished post", async () => {
+    const post = await createPost(users.author);
+    const res = await request("GET", `/posts/${post._id}/likes`, { as: users.reader });
+
+    expect(res.status).toBe(404);
+  });
+
+  it("responds with 404 for a post that does not exist", async () => {
+    const res = await request("GET", `/posts/${randomUUID()}/likes`, { as: users.reader });
+
+    expect(res.status).toBe(404);
+  });
+});
