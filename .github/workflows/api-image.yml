@@ -16,8 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  REGISTRY: ${{ vars.DOCKER_REGISTRY }}
-  IMAGE: ${{ vars.DOCKER_REGISTRY }}/comp3006-api
+  IMAGE: ${{ vars.DOCKERHUB_USERNAME }}/comp3006-api
 
 jobs:
   build-and-push:
@@ -29,9 +28,8 @@ jobs:
 
       - uses: docker/login-action@v4
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - id: version
         run: echo "version=$(jq -r .version api/package.json)" >> "$GITHUB_OUTPUT"
