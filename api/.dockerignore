@@ -1,0 +1,9 @@
+node_modules
+npm-debug.log
+.env
+Dockerfile
+.dockerignore
+
+# Tests are not needed in the image
+**/*.test.ts
+test-utils.ts
