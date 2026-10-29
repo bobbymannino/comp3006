@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { LivePostList } from "@/components/LivePostList";
-import { ApiError, getPosts } from "@/lib/api";
+import { ApiError, getPosts, withLiked } from "@/lib/api";
+import { getSession } from "@/lib/session";
 
 export default function Home() {
   return (
@@ -20,7 +21,7 @@ export default function Home() {
 async function PostList() {
   let posts;
   try {
-    posts = await getPosts();
+    posts = await withLiked(await getPosts(), await getSession());
   } catch (error) {
     if (!(error instanceof ApiError)) throw error;
     return (

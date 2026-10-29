@@ -1,8 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { ApiError, getPosts } from "@/lib/api";
-import { deleteSession } from "@/lib/session";
+import { ApiError, getPosts, likePost, unlikePost, withLiked } from "@/lib/api";
+import { deleteSession, getSession } from "@/lib/session";
 
 /**
  * Log the user out. The API has no logout route, so the token is only
@@ -21,9 +21,36 @@ export async function loadPostsAction(page: number) {
   // Anyone can call an action, so the page is not trusted to be a number
   const safePage = Math.max(1, Math.trunc(Number(page)) || 1);
   try {
-    return { posts: await getPosts(safePage) };
+    return { posts: await withLiked(await getPosts(safePage), await getSession()) };
   } catch (error) {
     if (!(error instanceof ApiError)) throw error;
+    return { error: error.message };
+  }
+}
+
+/**
+ * Like or unlike a post. Logged out users are sent to log in first. Errors are
+ * returned rather than thrown
+ */
+export async function setLikedAction(postId: string, liked: boolean) {
+  const token = await getSession();
+  if (!token) redirect("/login");
+
+  try {
+    await (liked ? likePost(postId, token) : unlikePost(postId, token));
+    return {};
+  } catch (error) {
+    if (!(error instanceof ApiError)) throw error;
+
+    // Already liked, or already not liked
+    if (error.status === (liked ? 409 : 404)) return {};
+
+    // The session has expired or ended on the API
+    if (error.status === 401) {
+      await deleteSession();
+      redirect("/login");
+    }
+
     return { error: error.message };
   }
 }
