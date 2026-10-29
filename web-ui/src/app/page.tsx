@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { PostPreviewCard } from "@/components/PostPreviewCard";
+import { LivePostList } from "@/components/LivePostList";
 import { ApiError, getPosts } from "@/lib/api";
 
 export default function Home() {
@@ -30,17 +30,5 @@ async function PostList() {
     );
   }
 
-  if (posts.length === 0) {
-    return <p className="text-muted-foreground">No posts yet.</p>;
-  }
-
-  return (
-    <ul className="grid gap-4 sm:grid-cols-2">
-      {posts.map((post) => (
-        <li key={post._id} className="flex *:flex-1">
-          <PostPreviewCard post={post} />
-        </li>
-      ))}
-    </ul>
-  );
+  return <LivePostList initialPosts={posts} />;
 }
