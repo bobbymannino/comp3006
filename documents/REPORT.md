@@ -77,6 +77,14 @@ blog.
 
 Table: Existing Products Comparison
 
+## AI Declaration
+
+In this project I have used AI. It has been used to create a huge amount of
+seeding data for the database, this makes the app feel more realistic and less
+like a generic blog platform. It has also been used to speed up the creation of
+tests, I want to have as many unit and integration tests as possible and so I
+have used AI to add as many as it can think on top of mine.
+
 ## Architecture
 
 ### Architecture Topology
@@ -143,9 +151,10 @@ helps maintainability and can reduce bugs.
 
 ### Database Structures
 
-The database will hold three collections: `users`, `posts` and `likes`. A user
-can write many posts, and a like links one user to one post, which gives the
-many-to-many "users like posts" relationship needed for FR04.
+The database will hold four collections: `users`, `posts`, `likes` and
+`sessions`. A user can write many posts, and a like links one user to one post,
+which gives the many-to-many "users like posts" relationship needed for _FR04_.
+A user can also have many sessions, one for each time they log in.
 
 Each collection's fields are shown below. MongoDB does not enforce foreign keys,
 so the `FK` fields are references the API is responsible for keeping valid.
@@ -160,11 +169,21 @@ so the `FK` fields are references the API is responsible for keeping valid.
   the feed does not need to count the `likes` collection for every post.
 - **Likes** — a compound unique index on `userId` and `postId` stops a user
   liking the same post twice. Unliking a post deletes the document.
+- **Sessions** — logging in creates a session and gives the user a random token
+  to send as a bearer token. Only a SHA-256 hash of the token is stored, so a
+  leaked database cannot be used to log in as anyone. Each session expires after
+  3 days and a TTL index on `expiresAt` has MongoDB delete it once it has.
 
 > [!NOTE]
-> When a user deletes their account (FR02) the API will also delete their posts,
-> the likes on those posts and the likes they have given, so no documents are
-> left pointing at a user that no longer exists.
+> When a user deletes their account (FR02) the API will also delete their
+> sessions, their posts, the likes on those posts and the likes they have given,
+> so no documents are left pointing at a user that no longer exists.
+
+When using MongoDB there is a feature to have an _init_ scripts[^mongo-init].
+This allows for 2 things that I have used: firstly you can have a schema
+creation file to make sure that the database schema is created when the
+container starts, and secondly you can have a seed file to populate the database
+with some initial data.
 
 ### API Endpoints
 
@@ -216,3 +235,6 @@ to the **web UI and API** images.
 ## Evaluation
 
 _TODO_
+
+[^mongo-init]:
+    <https://www.mongodb.com/docs/atlas/cli/current/atlas-cli-docker-compose#initialization>
