@@ -11,7 +11,6 @@ export async function handleCreateLike(req: Request<{ id: string }>, res: AuthRe
   const post = v.is(PostSchema.entries._id, id)
     ? await posts.findOne({ _id: id, publishedAt: { $ne: null } }, "_id")
     : null;
-  console.log(post);
   if (!post) {
     res.status(404).json({ status: 404, error: "That post does not exist." });
     return;
@@ -28,4 +27,19 @@ export async function handleCreateLike(req: Request<{ id: string }>, res: AuthRe
   }
 }
 
-export async function handleDeleteLike(req: Request<{ id: string }>, res: AuthResponse) {}
+export async function handleDeleteLike(req: Request<{ id: string }>, res: AuthResponse) {
+  // A post that does not exist has no likes either, so both are a 404. The post
+  // does not need to be published, so a like can still be taken back after
+  // its author unpublishes it, this is a decision i have chosen to make.
+  const id = req.params.id.toLowerCase();
+  const like = v.is(PostSchema.entries._id, id)
+    ? await likes.findOneAndDelete({ userId: res.locals.user._id, postId: id })
+    : null;
+  if (!like) {
+    res.status(404).json({ status: 404, error: "You have not liked this post." });
+    return;
+  }
+
+  await posts.updateOne({ _id: like.postId }, { $inc: { likeCount: -1 } });
+  res.status(204).end();
+}
