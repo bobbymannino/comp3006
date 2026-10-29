@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import logo from "@/assets/bloggy-logo.svg";
-import { buttonVariants } from "@/components/ui/button";
+import { logoutAction } from "@/app/actions";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { getSession } from "@/lib/session";
 
 /** The site-wide header */
@@ -33,9 +34,16 @@ async function Nav() {
 /** Logged in header nav */
 function NavUser() {
   return (
-    <Link href="/" className={buttonVariants({ variant: "ghost" })}>
-      Posts
-    </Link>
+    <>
+      <Link href="/" className={buttonVariants({ variant: "ghost" })}>
+        Posts
+      </Link>
+      <form action={logoutAction}>
+        <Button type="submit" variant="outline">
+          Log out
+        </Button>
+      </form>
+    </>
   );
 }
 
