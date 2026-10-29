@@ -1,5 +1,5 @@
 import express from "express";
-import { requireAuth } from "./auth.ts";
+import { optionalAuth, requireAuth } from "./auth.ts";
 import { logger } from "./log.ts";
 import {
   handleCreatePost,
@@ -25,7 +25,7 @@ export function createApiServer(port: number) {
   // Posts
   app.get("/api/posts", handleGetPosts);
   app.post("/api/posts", requireAuth, handleCreatePost);
-  app.get("/api/posts/:id", handleGetPost);
+  app.get("/api/posts/:id", optionalAuth, handleGetPost);
   app.put("/api/posts/:id", requireAuth, handleUpdatePost);
   app.delete("/api/posts/:id", requireAuth, handleDeletePost);
   // Likes

@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import * as v from "valibot";
-import type { AuthResponse } from "../auth.ts";
+import type { AuthResponse, OptionalAuthResponse } from "../auth.ts";
 import { isDuplicateKeyError, likes, posts } from "../db.ts";
 import { PostSchema } from "../schemas.ts";
 
@@ -46,7 +46,26 @@ export async function handleCreatePost(req: Request, res: AuthResponse) {
   }
 }
 
-export async function handleGetPost(req: Request<{ id: string }>, res: Response) {}
+export async function handleGetPost(req: Request<{ id: string }>, res: OptionalAuthResponse) {
+  // An ID that is not a UUID cannot match a post, and would fail to cast
+  const id = req.params.id.toLowerCase();
+  const user = res.locals.user;
+  // Unpublished posts are only visible to their author. Anyone else gets a 404
+  // rather than a 403 so they cannot tell the post exists
+  const visible = user
+    ? { $or: [{ publishedAt: { $ne: null } }, { authorId: user._id }] }
+    : { publishedAt: { $ne: null } };
+  const post = v.is(PostSchema.entries._id, id)
+    ? await posts.findOne({ _id: id, ...visible }, "-authorId")
+    : null;
+
+  if (!post) {
+    res.status(404).json({ status: 404, error: "That post does not exist." });
+    return;
+  }
+
+  res.status(200).json(post);
+}
 
 export async function handleUpdatePost(req: Request<{ id: string }>, res: AuthResponse) {
   const post = await findOwnPost(req, res, "update");
