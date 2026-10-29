@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import * as v from "valibot";
 import type { AuthResponse, OptionalAuthResponse } from "../auth.ts";
 import { isDuplicateKeyError, likes, posts } from "../db.ts";
+import { broadcastPost } from "../live.ts";
 import { PostSchema } from "../schemas.ts";
 
 const POSTS_PER_PAGE = 12;
@@ -104,6 +105,11 @@ export async function handleUpdatePost(req: Request<{ id: string }>, res: AuthRe
       runValidators: true,
     });
     res.status(200).json(updated);
+
+    // Only a post going from unpublished to published is new to the feed
+    if (updated && published && !post.publishedAt) {
+      broadcastPost({ ...updated.toJSON(), content: preview(updated.content) });
+    }
   } catch (error) {
     if (!isDuplicateKeyError(error)) throw error;
     res.status(409).json({ status: 409, error: "A post with that slug already exists." });

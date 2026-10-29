@@ -1,5 +1,6 @@
 import express from "express";
 import { optionalAuth, requireAuth } from "./auth.ts";
+import { attachLiveServer } from "./live.ts";
 import { logger } from "./log.ts";
 import {
   handleCreatePost,
@@ -45,7 +46,9 @@ export function createApiServer(port: number) {
     });
   });
 
-  app.listen(port, "0.0.0.0", () => {
+  const server = app.listen(port, "0.0.0.0", () => {
     log.info("Server is running");
   });
+  // WS /api/posts shares the HTTP server's port, this is not built into express
+  attachLiveServer(server);
 }
