@@ -14,7 +14,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "node --watch index.ts",
-    "test": "jest"
+    "test": "jest",
+    "test:unit": "jest --testPathIgnorePatterns '<rootDir>/api/'"
   },
   "dependencies": {
     "@node-rs/bcrypt": "^2.0.0",
