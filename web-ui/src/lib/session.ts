@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 
 /** The cookie the session token is kept in */
-const TOKEN_COOKIE = "token";
+export const TOKEN_COOKIE = "token";
 
 /**
  * Store a session token. It is `httpOnly` so it cannot be read by JavaScript
