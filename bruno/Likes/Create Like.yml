@@ -1,0 +1,20 @@
+info:
+  name: Create Like
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/posts/:postId/likes"
+  params:
+    - name: postId
+      value: "{{postId}}"
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
