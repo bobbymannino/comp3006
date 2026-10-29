@@ -6,7 +6,7 @@ import { PublicPostSchema } from "../../../api/schemas";
 import { loadPostsAction } from "@/app/actions";
 import { PostPreviewCard } from "@/components/PostPreviewCard";
 import { Button } from "@/components/ui/button";
-import type { PublicPost } from "@/lib/api";
+import type { LikeablePost } from "@/lib/api";
 
 /** Where the API sends newly published posts, this is public as the browser connects to it */
 const LIVE_URL =
@@ -25,7 +25,7 @@ type Status = "idle" | "loading" | "end" | "error";
  * Add posts to a list, skipping any already in it. Pages can overlap when
  * posts are published after the first page loaded, as each page then starts later
  */
-function withoutDuplicates(current: PublicPost[], added: PublicPost[]) {
+function withoutDuplicates(current: LikeablePost[], added: LikeablePost[]) {
   const seen = new Set(current.map((post) => post._id));
   return added.filter((post) => !seen.has(post._id));
 }
@@ -34,7 +34,7 @@ function withoutDuplicates(current: PublicPost[], added: PublicPost[]) {
  * A list of posts, which adds newly published posts to the top as they happen
  * and loads the next page when scrolled to the bottom
  */
-export function LivePostList({ initialPosts }: { initialPosts: PublicPost[] }) {
+export function LivePostList({ initialPosts }: { initialPosts: LikeablePost[] }) {
   const [posts, setPosts] = useState(initialPosts);
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<Status>("idle");
