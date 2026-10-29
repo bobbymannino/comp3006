@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
+import { LikeButton } from "@/components/LikeButton";
 import { buttonVariants } from "@/components/ui/button";
-import { ApiError, getPost } from "@/lib/api";
+import { ApiError, getLiked, getPost } from "@/lib/api";
 import { getSession } from "@/lib/session";
 
 /** Get a post as the current user, cached so the metadata and page share one request */
@@ -47,6 +48,10 @@ export default function PostPage({ params }: PageProps<"/posts/[id]">) {
 /** A single post in full */
 async function Post({ params }: Pick<PageProps<"/posts/[id]">, "params">) {
   const { id } = await params;
+  const token = await getSession();
+  // Checked alongside the post rather than after it. If it cannot be checked
+  // the post is shown as not liked rather than failing
+  const likedRequest = token ? getLiked(id, token).catch(() => false) : undefined;
 
   let post;
   try {
@@ -60,6 +65,7 @@ async function Post({ params }: Pick<PageProps<"/posts/[id]">, "params">) {
       </p>
     );
   }
+  const liked = await likedRequest;
 
   return (
     <article>
@@ -76,10 +82,15 @@ async function Post({ params }: Pick<PageProps<"/posts/[id]">, "params">) {
             // Only the author can see an unpublished post
             <span>Draft, only you can see this</span>
           )}
-          <span className="flex items-center gap-1">
-            <HeartIcon aria-hidden className="size-4" />
-            {post.likeCount} {post.likeCount === 1 ? "like" : "likes"}
-          </span>
+          {post.publishedAt ? (
+            <LikeButton postId={post._id} likeCount={post.likeCount} liked={liked} />
+          ) : (
+            // Only published posts can be liked
+            <span className="flex items-center gap-1">
+              <HeartIcon aria-hidden className="size-4" />
+              {post.likeCount} {post.likeCount === 1 ? "like" : "likes"}
+            </span>
+          )}
         </div>
       </header>
       {/* Content is plain text, so keep its line breaks */}

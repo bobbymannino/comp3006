@@ -1,5 +1,5 @@
-import { HeartIcon } from "lucide-react";
 import Link from "next/link";
+import { LikeButton } from "@/components/LikeButton";
 import {
   Card,
   CardContent,
@@ -8,10 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { PublicPost } from "@/lib/api";
+import type { LikeablePost } from "@/lib/api";
 
 /** A post in a list, showing a preview of its content */
-export function PostPreviewCard({ post }: { post: PublicPost }) {
+export function PostPreviewCard({ post }: { post: LikeablePost }) {
   return (
     // `relative` so the title's link can cover the whole card
     <Card className="relative transition-colors hover:bg-muted/50">
@@ -37,9 +37,13 @@ export function PostPreviewCard({ post }: { post: PublicPost }) {
       <CardContent className="flex-1 text-muted-foreground">
         <p>{post.content}</p>
       </CardContent>
-      <CardFooter className="gap-1 text-muted-foreground">
-        <HeartIcon aria-hidden className="size-4" />
-        {post.likeCount} {post.likeCount === 1 ? "like" : "likes"}
+      <CardFooter className="text-muted-foreground">
+        <LikeButton
+          postId={post._id}
+          likeCount={post.likeCount}
+          liked={post.liked}
+          className="relative z-10 -ml-2.5"
+        />
       </CardFooter>
     </Card>
   );
