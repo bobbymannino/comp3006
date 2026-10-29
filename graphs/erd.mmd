@@ -29,8 +29,17 @@ erDiagram
         date createdAt
     }
 
+    SESSIONS {
+        uuid id PK
+        uuid userId FK "users.id"
+        string tokenHash UK "SHA-256 of the token"
+        date createdAt
+        date expiresAt "deleted once passed"
+    }
+
     USERS ||--o{ POSTS : writes
     USERS ||--o{ LIKES : gives
     POSTS ||--o{ LIKES : receives
+    USERS ||--o{ SESSIONS : "logs in with"
 
     "**Key:**<br>FK = Foreign Key<br>PK = Primary Key<br>UK = Unique Key<br>? = Optional"
