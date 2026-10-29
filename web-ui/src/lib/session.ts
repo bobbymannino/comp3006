@@ -18,6 +18,15 @@ export async function setSession(token: string, expiresAt: string) {
 }
 
 /**
+ * Get the session token, if logged in. The cookie expires with the session,
+ * so having one means the user is logged in
+ */
+export async function getSession() {
+  const cs = await cookies();
+  return cs.get(TOKEN_COOKIE)?.value;
+}
+
+/**
  * Delete a session token
  */
 export async function deleteSession() {
