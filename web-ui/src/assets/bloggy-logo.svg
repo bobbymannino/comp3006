@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1080 1080">
+  <defs>
+    <style>
+      .cls-1{fill:#ffffff}
+      .cls-2{fill:none;stroke:#000000;stroke-width:64;stroke-miterlimit:10}
+      .cls-3{fill:none;stroke:#000000;stroke-width:32;stroke-linecap:round;stroke-miterlimit:10}
+      .cls-4{fill:#ffffff;stroke:#000000;stroke-width:32;stroke-miterlimit:10}
+    </style>
+    <clipPath id="clip-path-1">
+      <path d="M236 0 L844 0 C914.692 0 972 57.308 972 128 L972 952 C972 1022.692 914.692 1080 844 1080 L236 1080 C165.308 1080 108 1022.692 108 952 L108 128 C108 57.308 165.308 0 236 0 Z"/>
+    </clipPath>
+  </defs>
+  <title>Artboard 1</title>
+  <g id="Layer_1" data-name="Layer 1">
+    <g>
+      <path d="M236 0 L844 0 C914.692 0 972 57.308 972 128 L972 952 C972 1022.692 914.692 1080 844 1080 L236 1080 C165.308 1080 108 1022.692 108 952 L108 128 C108 57.308 165.308 0 236 0 Z" class="cls-1"/>
+      <path d="M236 0 L844 0 C914.692 0 972 57.308 972 128 L972 952 C972 1022.692 914.692 1080 844 1080 L236 1080 C165.308 1080 108 1022.692 108 952 L108 128 C108 57.308 165.308 0 236 0 Z" class="cls-2" clip-path="url(#clip-path-1)"/>
+    </g>
+    <g>
+      <path d="M391.245 242.491 L391.245 837.509" class="cls-3"/>
+      <path d="M391.245 391.245 C391.245 309.09 457.845 242.491 540 242.491 C622.155 242.491 688.755 309.09 688.755 391.245 C688.755 473.4 622.155 540 540 540 C457.845 540 391.245 473.4 391.245 391.245 Z" class="cls-4"/>
+      <path d="M391.245 688.755 C391.245 606.6 457.845 540 540 540 C622.155 540 688.755 606.6 688.755 688.755 C688.755 770.91 622.155 837.509 540 837.509 C457.845 837.509 391.245 770.91 391.245 688.755 Z" class="cls-4"/>
+    </g>
+  </g>
+</svg>
