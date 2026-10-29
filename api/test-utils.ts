@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll } from "@jest/globals";
 import * as v from "valibot";
 import { loadEnv } from "./env.ts";
-import { CreatedSchema, PublicPostSchema, SignupSchema } from "./schemas.ts";
+import { CreatedSchema, PostWithAuthorSchema, SignupSchema } from "./schemas.ts";
 
 // Expects the API to already be running, e.g. via `npm run dev`
 const env = loadEnv();
@@ -172,5 +172,5 @@ export async function createPublishedPost(author: TestUser) {
 /** Get a post's current like count, as seen by its author */
 export async function getLikeCount(author: TestUser, post: TestPost) {
   const res = await request("GET", `/posts/${post._id}`, { as: author });
-  return v.parse(PublicPostSchema, res.body).likeCount;
+  return v.parse(PostWithAuthorSchema, res.body).likeCount;
 }

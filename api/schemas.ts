@@ -34,10 +34,16 @@ export const UserSchema = v.strictObject({
   updatedAt: date,
 });
 
+/** A single post as returned by the API, with its author's display name */
+export const PostWithAuthorSchema = v.strictObject({
+  ...PostSchema.entries,
+  authorDisplayName: UserSchema.entries.displayName,
+});
+
 /** The response when a document is created */
 export const CreatedSchema = v.strictObject({ _id: uuid });
 
-/** The response when logging in */
+/** A new session's token and when it expires */
 export const SessionSchema = v.strictObject({
   token: v.pipe(v.string(), v.minLength(1)),
   expiresAt: date,
@@ -48,6 +54,9 @@ export const SignupSchema = v.strictObject({
   ...CreatedSchema.entries,
   ...SessionSchema.entries,
 });
+
+/** The response when logging in, the same as signing up so clients know the user's ID */
+export const LoginSchema = SignupSchema;
 
 // Request bodies. These are strict so unknown fields, such as `passwordHash`
 // or `likeCount`, are rejected rather than written to the database

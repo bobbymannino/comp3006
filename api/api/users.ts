@@ -58,7 +58,7 @@ export async function handleLoginUser(req: Request, res: Response) {
   }
 
   const session = await createSession(user._id);
-  res.status(201).json(session);
+  res.status(201).json({ _id: user._id, ...session });
 }
 
 export async function handleUpdateUser(req: Request<{ id: string }>, res: AuthResponse) {
