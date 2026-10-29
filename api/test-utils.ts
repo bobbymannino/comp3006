@@ -140,8 +140,11 @@ export function useUsers<const Name extends string>(...names: Name[]) {
   return users;
 }
 
-/** Create an unpublished post with a unique slug */
-export async function createPost(author: TestUser, overrides: Partial<Omit<TestPost, "_id">> = {}) {
+/** Create a post with a unique slug, unpublished unless `published` is true */
+export async function createPost(
+  author: TestUser,
+  { published, ...overrides }: Partial<Omit<TestPost, "_id">> & { published?: boolean } = {},
+) {
   const id = uniqueId();
   const post = {
     title: `Test Post ${id}`,
@@ -149,7 +152,7 @@ export async function createPost(author: TestUser, overrides: Partial<Omit<TestP
     content: "Just some text here",
     ...overrides,
   };
-  const res = await request("POST", "/posts", { body: post, as: author });
+  const res = await request("POST", "/posts", { body: { ...post, published }, as: author });
   const { _id } = expectCreated(res, CreatedSchema, "post");
   return { ...post, _id } satisfies TestPost;
 }

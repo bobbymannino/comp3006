@@ -69,14 +69,13 @@ export const LoginBodySchema = v.strictObject({
   password: v.string(),
 });
 
-/** The body to create a post with. Posts start unpublished */
+/** The body to create a post with. Posts start unpublished unless `published` is true */
 export const CreatePostBodySchema = v.strictObject({
   title: PostSchema.entries.title,
   slug: PostSchema.entries.slug,
   content: v.optional(PostSchema.entries.content),
+  published: v.optional(v.boolean()),
 });
 
 /** The body to update a post with, which can also publish or unpublish it */
-export const UpdatePostBodySchema = v.partial(
-  v.strictObject({ ...CreatePostBodySchema.entries, published: v.boolean() }),
-);
+export const UpdatePostBodySchema = v.partial(CreatePostBodySchema);

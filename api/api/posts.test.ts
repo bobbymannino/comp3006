@@ -93,6 +93,14 @@ describe("POST /api/posts", () => {
     expect(v.parse(PublicPostSchema, res.body).publishedAt).toBeNull();
   });
 
+  it("creates the post published when asked", async () => {
+    const post = await createPost(users.author, { published: true });
+    const res = await request("GET", `/posts/${post._id}`);
+
+    expect(res.status).toBe(200);
+    expect(v.parse(PublicPostSchema, res.body).publishedAt).not.toBeNull();
+  });
+
   it("requires auth", async () => {
     const res = await request("POST", "/posts", { body: postBody() });
 

@@ -31,10 +31,21 @@ export async function handleCreatePost(req: Request, res: AuthResponse) {
     return;
   }
 
-  // Posts start unpublished, publishing is done through an update
+  // Posts start unpublished unless asked, otherwise publishing is done through an update
+  const { published, ...details } = body.output;
   try {
-    const post = await posts.create({ ...body.output, authorId: res.locals.user._id });
+    const post = await posts.create({
+      ...details,
+      authorId: res.locals.user._id,
+      publishedAt: published ? new Date() : null,
+    });
     res.status(201).json({ _id: post._id });
+
+    // A post published straight away is new to the feed, without its author
+    if (published) {
+      const { authorId: _, ...publicPost } = post.toJSON();
+      broadcastPost({ ...publicPost, content: preview(post.content) });
+    }
   } catch (error) {
     if (!isDuplicateKeyError(error)) throw error;
     res.status(409).json({ status: 409, error: "A post with that slug already exists." });

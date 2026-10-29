@@ -242,11 +242,18 @@ describe("CreatePostBodySchema", () => {
     expect(v.is(CreatePostBodySchema, partial)).toBe(false);
   });
 
+  it.each([true, false])("accepts published: %p", (published) => {
+    expect(v.is(CreatePostBodySchema, { ...body, published })).toBe(true);
+  });
+
+  it.each(["true", 1, null])("rejects published: %p", (published) => {
+    expect(v.is(CreatePostBodySchema, { ...body, published })).toBe(false);
+  });
+
   it.each([
     ["publishedAt", now],
     ["likeCount", 100],
     ["authorId", randomUUID()],
-    ["published", true],
   ])("rejects setting %s", (key, value) => {
     expect(v.is(CreatePostBodySchema, { ...body, [key]: value })).toBe(false);
   });
