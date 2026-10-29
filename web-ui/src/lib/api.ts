@@ -2,6 +2,7 @@ import type * as v from "valibot";
 // Type-only, so none of the API's code ends up in the web UI
 import type {
   LoginBodySchema,
+  PublicPostSchema,
   SessionSchema,
   SignupBodySchema,
   SignupSchema,
@@ -53,4 +54,12 @@ export function login(body: v.InferInput<typeof LoginBodySchema>) {
     method: "POST",
     body: JSON.stringify(body),
   });
+}
+
+/** A post as shown publicly, with its content cut down to a preview in lists */
+export type PublicPost = v.InferOutput<typeof PublicPostSchema>;
+
+/** Get a page of published posts, newest first. Pages start at 1 */
+export function getPosts(page = 1) {
+  return request<PublicPost[]>(`/api/posts?page=${page}`);
 }
