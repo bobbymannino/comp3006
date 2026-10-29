@@ -78,3 +78,46 @@ export function getPost(id: string, token?: string) {
     headers: auth(token),
   });
 }
+
+/** Check if the logged in user has liked a post */
+export function getLiked(id: string, token: string) {
+  return request<boolean>(`/api/posts/${encodeURIComponent(id)}/likes`, {
+    headers: auth(token),
+  });
+}
+
+/** A post along with whether the logged in user has liked it, left out when logged out */
+export type LikeablePost = PublicPost & { liked?: boolean };
+
+/**
+ * Add whether the logged in user has liked each post, checking them all at
+ * once. A post that cannot be checked is shown as not liked rather than failing
+ */
+export async function withLiked(
+  posts: PublicPost[],
+  bearerToken?: string,
+): Promise<LikeablePost[]> {
+  if (!bearerToken) return posts;
+  return Promise.all(
+    posts.map(async (post) => ({
+      ...post,
+      liked: await getLiked(post._id, bearerToken).catch(() => false),
+    })),
+  );
+}
+
+/** Like a post as the logged in user */
+export function likePost(postId: string, bearerToken: string) {
+  return request<unknown>(`/api/posts/${encodeURIComponent(postId)}/likes`, {
+    method: "POST",
+    headers: auth(bearerToken),
+  });
+}
+
+/** Take back the logged in user's like of a post */
+export function unlikePost(postId: string, bearerToken: string) {
+  return request<unknown>(`/api/posts/${encodeURIComponent(postId)}/likes`, {
+    method: "DELETE",
+    headers: auth(bearerToken),
+  });
+}
