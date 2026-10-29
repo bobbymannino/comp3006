@@ -1,0 +1,31 @@
+info:
+  name: Create Post
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{baseUrl}}/posts"
+  body:
+    type: json
+    data: |-
+      {
+        "title": "New Post",
+        "slug": "{{$randomUUID}}"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        if (res.status == 201) {
+          bru.setVar("postId", res.body._id);
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

@@ -5,7 +5,7 @@
 # parallel.
 set -euo pipefail
 
-BUILD_PDF="$HOME/Desktop/pdf/build-pdf.sh"
+BUILD_PDF="$HOME/code/pdf/build-pdf.sh"
 ROOT="$(git -C "$(dirname "$0")/documents" rev-parse --show-toplevel)"
 cd "$ROOT"
 

@@ -90,6 +90,30 @@ const collections = {
       { key: { postId: 1 }, name: "post_likes" },
     ],
   },
+
+  // Only a SHA-256 hash of each bearer token is stored, never the token itself
+  sessions: {
+    validator: {
+      $jsonSchema: {
+        bsonType: "object",
+        required: ["_id", "userId", "tokenHash", "createdAt", "expiresAt"],
+        additionalProperties: false,
+        properties: {
+          _id: uuid,
+          userId: uuid,
+          tokenHash: { bsonType: "string", pattern: "^[a-f0-9]{64}$" },
+          createdAt: date,
+          expiresAt: date,
+        },
+      },
+    },
+    indexes: [
+      { key: { tokenHash: 1 }, name: "token_hash_unique", unique: true },
+      { key: { userId: 1 }, name: "user_sessions" },
+      // MongoDB deletes each session once it expires
+      { key: { expiresAt: 1 }, name: "session_expiry", expireAfterSeconds: 0 },
+    ],
+  },
 };
 
 const existing = db.getCollectionNames();

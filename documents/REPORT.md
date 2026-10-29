@@ -168,25 +168,27 @@ so the `FK` fields are references the API is responsible for keeping valid.
 
 ### API Endpoints
 
-| Method | Path               | Action                         | Requires Auth |
-| ------ | ------------------ | ------------------------------ | ------------- |
-| POST   | `/users`           | Create a new user              | N             |
-| PUT    | `/users/:id`       | Update a user by id            | Y             |
-| DELETE | `/users/:id`       | Delete a user                  | Y             |
-| GET    | `/posts`           | Get all posts                  | N             |
-| WS     | `/posts`           | Get all posts live             | N             |
-| POST   | `/posts`           | Create a new post              | Y             |
-| GET    | `/posts/:id`       | Get a post by id               | N             |
-| PUT    | `/posts/:id`       | Update a post by id            | Y             |
-| DELETE | `/posts/:id`       | Delete a post by id            | Y             |
-| POST   | `/posts/:id/likes` | Create a new like              | Y             |
-| DELETE | `/posts/:id/likes` | Delete a like by user and post | Y             |
+> [!NOTE]
+> All paths will be prepended with `/api`.
+
+| Method | Path               | Action                           | Requires Bearer |
+| ------ | ------------------ | -------------------------------- | --------------- |
+| PUT    | `/users/:id`       | Update a user by id              | Y               |
+| DELETE | `/users/:id`       | Delete a user                    | Y               |
+| GET    | `/posts`           | Get all posts                    | N               |
+| WS     | `/posts`           | Get all posts live               | N               |
+| POST   | `/posts`           | Create a new post                | Y               |
+| GET    | `/posts/:id`       | Get a post by id                 | N               |
+| PUT    | `/posts/:id`       | Update a post by id              | Y               |
+| DELETE | `/posts/:id`       | Delete a post by id              | Y               |
+| POST   | `/posts/:id/likes` | Create a new like                | Y               |
+| DELETE | `/posts/:id/likes` | Delete a like by user and post   | Y               |
+| POST   | `/auth/login`      | Sign in with an existing account | N               |
+| POST   | `/auth/signup`     | Create a new user account        | N               |
 
 Table: API Endpoints
 
 ## Testing
-
-Testing will be split into 2 categories: isolated and holistic.
 
 ### Isolated Testing
 
