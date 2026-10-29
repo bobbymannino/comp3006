@@ -12,3 +12,6 @@ variables:
   - name: password
     value: password
     description: ""
+  - name: wsUrl
+    value: ws://localhost:3000/api
+    description: The base URL the API is running on, with a ws prefix.
