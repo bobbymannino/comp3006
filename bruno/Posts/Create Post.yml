@@ -10,9 +10,10 @@ http:
     type: json
     data: |-
       {
-        "title": "New Post",
+        "title": "{{$randomStreetName}}",
         "slug": "{{$randomUUID}}",
-        "published": true
+        "content": "{{$randomCatchPhrase}}",
+        "published": {{$randomBoolean}}
       }
   auth: inherit
 

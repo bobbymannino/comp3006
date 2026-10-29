@@ -6,7 +6,7 @@ import { CreatedSchema, PublicPostSchema, SignupSchema } from "./schemas.ts";
 
 // Expects the API to already be running, e.g. via `npm run dev`
 const env = loadEnv();
-export const baseUrl = `http://localhost:${env.PORT}/api`;
+export const baseUrl = `http://localhost:${env.API_PORT}/api`;
 
 /** A user created for a test, along with their password and session token */
 export type TestUser = {
