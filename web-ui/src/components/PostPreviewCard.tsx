@@ -24,15 +24,17 @@ export function PostPreviewCard({ post }: { post: LikeablePost }) {
             {post.title}
           </Link>
         </CardTitle>
-        {post.publishedAt && (
-          <CardDescription>
+        <CardDescription>
+          {post.publishedAt ? (
             <time dateTime={post.publishedAt}>
               {new Date(post.publishedAt).toLocaleDateString("en-GB", {
                 dateStyle: "medium",
               })}
             </time>
-          </CardDescription>
-        )}
+          ) : (
+            "Draft"
+          )}
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 text-muted-foreground">
         <p>{post.content}</p>
