@@ -1,0 +1,12 @@
+# Used by web-ui/Dockerfile, whose context is the repo root. Everything is
+# ignored except what the web UI needs to build
+*
+!web-ui
+!api/schemas.ts
+
+web-ui/node_modules
+web-ui/.next
+web-ui/next-env.d.ts
+web-ui/Dockerfile
+web-ui/Dockerfile.dockerignore
+**/.env*
