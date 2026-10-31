@@ -167,3 +167,11 @@ export function updateUser(
     body: JSON.stringify(body),
   });
 }
+
+/** Delete a post as the logged in user */
+export function deletePost(postId: string, bearerToken: string) {
+  return request<unknown>(`/api/posts/${encodeURIComponent(postId)}`, {
+    method: "DELETE",
+    headers: auth(bearerToken),
+  });
+}

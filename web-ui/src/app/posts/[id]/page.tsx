@@ -5,9 +5,10 @@ import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
 import { LikeButton } from "@/components/LikeButton";
 import { buttonVariants } from "@/components/ui/button";
-import { ApiError, getLiked, getPost } from "@/lib/api";
+import { ApiError, getLiked, getMe, getPost } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { Main } from "@/components/main";
+import { DeletePostButton } from "./delete-post-button";
 
 /** Get a post as the current user, cached so the metadata and page share one request */
 const loadPost = cache(async (id: string) => getPost(id, await getSession()));
@@ -55,6 +56,9 @@ async function Post({ params }: Pick<PageProps<"/posts/[id]">, "params">) {
   const likedRequest = token
     ? getLiked(id, token).catch(() => false)
     : undefined;
+  // Who is logged in, to know if they wrote the post. If it cannot be checked
+  // the post is shown without the author's controls rather than failing
+  const meRequest = token ? getMe(token).catch(() => undefined) : undefined;
 
   let post;
   try {
@@ -68,44 +72,47 @@ async function Post({ params }: Pick<PageProps<"/posts/[id]">, "params">) {
       </p>
     );
   }
-  const liked = await likedRequest;
+  const [liked, me] = await Promise.all([likedRequest, meRequest]);
 
   return (
     <article>
       <header className="mb-6 flex flex-col gap-2 border-b pb-6">
         <h1>{post.title}</h1>
-        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          {post.publishedAt ? (
-            <>
-              <time dateTime={post.publishedAt}>
-                {new Date(post.publishedAt).toLocaleDateString("en-GB", {
-                  dateStyle: "medium",
-                })}
-              </time>
-              •
-              <span>
-                @{post.authorUsername} ({post.authorDisplayName})
-              </span>
-              •
-            </>
-          ) : (
-            // Only the author can see an unpublished post
-            <span>Draft, only you can see this</span>
-          )}
+        <div className="flex items-center gap-3 justify-between">
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            {post.publishedAt ? (
+              <>
+                <time dateTime={post.publishedAt}>
+                  {new Date(post.publishedAt).toLocaleDateString("en-GB", {
+                    dateStyle: "medium",
+                  })}
+                </time>
+                •
+                <span>
+                  @{post.authorUsername} ({post.authorDisplayName})
+                </span>
+                •
+              </>
+            ) : (
+              // Only the author can see an unpublished post
+              <span>Draft, only you can see this</span>
+            )}
 
-          {post.publishedAt ? (
-            <LikeButton
-              postId={post._id}
-              likeCount={post.likeCount}
-              liked={liked}
-            />
-          ) : (
-            // Only published posts can be liked
-            <span className="flex items-center gap-1">
-              <HeartIcon aria-hidden className="size-4" />
-              {post.likeCount} {post.likeCount === 1 ? "like" : "likes"}
-            </span>
-          )}
+            {post.publishedAt ? (
+              <LikeButton
+                postId={post._id}
+                likeCount={post.likeCount}
+                liked={liked}
+              />
+            ) : (
+              // Only published posts can be liked
+              <span className="flex items-center gap-1">
+                <HeartIcon aria-hidden className="size-4" />
+                {post.likeCount} {post.likeCount === 1 ? "like" : "likes"}
+              </span>
+            )}
+          </div>
+          {me && post.authorId === me._id && <DeletePostButton postId={post._id} />}
         </div>
       </header>
       {/* Content is plain text, so keep its line breaks */}

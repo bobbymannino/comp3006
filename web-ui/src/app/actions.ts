@@ -1,7 +1,16 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { ApiError, deleteUser, getMe, getPosts, likePost, unlikePost, withLiked } from "@/lib/api";
+import {
+  ApiError,
+  deletePost,
+  deleteUser,
+  getMe,
+  getPosts,
+  likePost,
+  unlikePost,
+  withLiked,
+} from "@/lib/api";
 import { deleteSession, getSession } from "@/lib/session";
 
 /**
@@ -83,4 +92,30 @@ export async function deleteAccountAction(): Promise<{ error?: string }> {
   // deleted user, so the token is only forgotten here
   await deleteSession();
   redirect("/");
+}
+
+/**
+ * Delete one of the logged in user's posts, along with its likes. Errors are
+ * returned rather than thrown
+ */
+export async function deletePostAction(postId: string): Promise<{ error?: string }> {
+  const token = await getSession();
+  if (!token) redirect("/login");
+
+  try {
+    await deletePost(postId, token);
+  } catch (error) {
+    if (!(error instanceof ApiError)) throw error;
+
+    // The session has expired or ended on the API
+    if (error.status === 401) {
+      await deleteSession();
+      redirect("/login");
+    }
+
+    return { error: error.message };
+  }
+
+  // Outside the try as it works by throwing. The user stays logged in
+  redirect("/account");
 }
