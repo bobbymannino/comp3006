@@ -58,7 +58,7 @@ export async function handleLoginUser(req: Request, res: Response) {
   }
 
   const session = await createSession(user._id);
-  res.status(201).json(session);
+  res.status(201).json({ _id: user._id, ...session });
 }
 
 export async function handleUpdateUser(req: Request<{ id: string }>, res: AuthResponse) {
@@ -127,4 +127,33 @@ export async function handleDeleteUser(req: Request<{ id: string }>, res: AuthRe
 
   await users.deleteOne({ _id: self._id });
   res.status(204).end();
+}
+
+/**
+ * Return the currently logged in users display name, ID, username, email,
+ * created/updated at, and a list of all their published and unpublished posts.
+ */
+export async function handleGetMe(_req: Request, res: AuthResponse) {
+  const user = await users.findOne({ _id: res.locals.user.id }, "-passwordHash");
+  if (!user) {
+    res.status(404).json({ status: 404, error: "User not found." });
+    return;
+  }
+
+  const userPosts = await posts.find({ authorId: user._id });
+
+  // One query for every post's like, rather than one per post
+  const userLikes = await likes.find(
+    { userId: user._id, postId: { $in: userPosts.map((post) => post._id) } },
+    "postId",
+  );
+  const likedIds = new Set(userLikes.map((like) => like.postId.toString()));
+
+  res.json({
+    ...user.toJSON(),
+    posts: userPosts.map((post) => ({
+      ...post.toJSON(),
+      liked: likedIds.has(post._id.toString()),
+    })),
+  });
 }

@@ -200,6 +200,7 @@ with some initial data.
 | GET    | `/posts/:id`       | Get a post by id                 | N               |
 | PUT    | `/posts/:id`       | Update a post by id              | Y               |
 | DELETE | `/posts/:id`       | Delete a post by id              | Y               |
+| GET    | `/posts/:id/likes` | Check if the user liked a post   | Y               |
 | POST   | `/posts/:id/likes` | Create a new like                | Y               |
 | DELETE | `/posts/:id/likes` | Delete a like by user and post   | Y               |
 | POST   | `/auth/login`      | Sign in with an existing account | N               |

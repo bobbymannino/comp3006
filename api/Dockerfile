@@ -11,7 +11,7 @@ RUN npm ci --omit=dev
 COPY . .
 
 # Config comes from environment variables (e.g. docker run --env-file ../.env)
-ENV PORT=3000
+ENV API_PORT=3000
 EXPOSE 3000
 
 USER node

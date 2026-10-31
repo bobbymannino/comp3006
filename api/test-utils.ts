@@ -2,11 +2,11 @@ import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll } from "@jest/globals";
 import * as v from "valibot";
 import { loadEnv } from "./env.ts";
-import { CreatedSchema, PublicPostSchema, SignupSchema } from "./schemas.ts";
+import { CreatedSchema, PostWithAuthorSchema, SignupSchema } from "./schemas.ts";
 
 // Expects the API to already be running, e.g. via `npm run dev`
 const env = loadEnv();
-export const baseUrl = `http://localhost:${env.PORT}/api`;
+export const baseUrl = `http://localhost:${env.API_PORT}/api`;
 
 /** A user created for a test, along with their password and session token */
 export type TestUser = {
@@ -140,8 +140,11 @@ export function useUsers<const Name extends string>(...names: Name[]) {
   return users;
 }
 
-/** Create an unpublished post with a unique slug */
-export async function createPost(author: TestUser, overrides: Partial<Omit<TestPost, "_id">> = {}) {
+/** Create a post with a unique slug, unpublished unless `published` is true */
+export async function createPost(
+  author: TestUser,
+  { published, ...overrides }: Partial<Omit<TestPost, "_id">> & { published?: boolean } = {},
+) {
   const id = uniqueId();
   const post = {
     title: `Test Post ${id}`,
@@ -149,7 +152,7 @@ export async function createPost(author: TestUser, overrides: Partial<Omit<TestP
     content: "Just some text here",
     ...overrides,
   };
-  const res = await request("POST", "/posts", { body: post, as: author });
+  const res = await request("POST", "/posts", { body: { ...post, published }, as: author });
   const { _id } = expectCreated(res, CreatedSchema, "post");
   return { ...post, _id } satisfies TestPost;
 }
@@ -169,5 +172,5 @@ export async function createPublishedPost(author: TestUser) {
 /** Get a post's current like count, as seen by its author */
 export async function getLikeCount(author: TestUser, post: TestPost) {
   const res = await request("GET", `/posts/${post._id}`, { as: author });
-  return v.parse(PublicPostSchema, res.body).likeCount;
+  return v.parse(PostWithAuthorSchema, res.body).likeCount;
 }

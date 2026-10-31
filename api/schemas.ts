@@ -34,10 +34,17 @@ export const UserSchema = v.strictObject({
   updatedAt: date,
 });
 
+/** A single post as returned by the API, with its author's username and display name */
+export const PostWithAuthorSchema = v.strictObject({
+  ...PostSchema.entries,
+  authorUsername: UserSchema.entries.username,
+  authorDisplayName: UserSchema.entries.displayName,
+});
+
 /** The response when a document is created */
 export const CreatedSchema = v.strictObject({ _id: uuid });
 
-/** The response when logging in */
+/** A new session's token and when it expires */
 export const SessionSchema = v.strictObject({
   token: v.pipe(v.string(), v.minLength(1)),
   expiresAt: date,
@@ -48,6 +55,9 @@ export const SignupSchema = v.strictObject({
   ...CreatedSchema.entries,
   ...SessionSchema.entries,
 });
+
+/** The response when logging in, the same as signing up so clients know the user's ID */
+export const LoginSchema = SignupSchema;
 
 // Request bodies. These are strict so unknown fields, such as `passwordHash`
 // or `likeCount`, are rejected rather than written to the database
@@ -69,14 +79,19 @@ export const LoginBodySchema = v.strictObject({
   password: v.string(),
 });
 
-/** The body to create a post with. Posts start unpublished */
+/** The body to create a post with. Posts start unpublished unless `published` is true */
 export const CreatePostBodySchema = v.strictObject({
   title: PostSchema.entries.title,
   slug: PostSchema.entries.slug,
   content: v.optional(PostSchema.entries.content),
+  published: v.optional(v.boolean()),
 });
 
 /** The body to update a post with, which can also publish or unpublish it */
-export const UpdatePostBodySchema = v.partial(
-  v.strictObject({ ...CreatePostBodySchema.entries, published: v.boolean() }),
-);
+export const UpdatePostBodySchema = v.partial(CreatePostBodySchema);
+
+/** The schema of an accounts information and posts, with whether they have liked each post */
+export const MeSchema = v.strictObject({
+  ...UserSchema.entries,
+  posts: v.array(v.strictObject({ ...PostSchema.entries, liked: v.boolean() })),
+});

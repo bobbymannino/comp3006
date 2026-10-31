@@ -56,6 +56,16 @@ describe("WS /api/posts", () => {
     expect(result.output).toMatchObject(post);
   });
 
+  it("sends a post that is published when created", async () => {
+    const slug = `test-post-${uniqueId()}`;
+    const message = nextMessageFor(socket, slug);
+    const post = await createPost(users.author, { slug, published: true });
+
+    const result = v.safeParse(PublicPostSchema, await message);
+    expect(result.issues && v.flatten(result.issues)).toBeUndefined();
+    expect(result.output).toMatchObject({ _id: post._id, slug });
+  });
+
   it("does not send a post that is still unpublished", async () => {
     const slug = `test-post-${uniqueId()}`;
     const message = noMessageFor(socket, slug);

@@ -1,7 +1,7 @@
 name: Dev
 variables:
   - name: baseUrl
-    value: http://localhost:3000/api
+    value: http://{{host}}:{{port}}/api
     description: The base URL the API is running on.
   - name: email
     value: manninobobby@icloud.com
@@ -13,5 +13,11 @@ variables:
     value: password
     description: ""
   - name: wsUrl
-    value: ws://localhost:3000/api
+    value: ws://{{host}}:{{port}}/api
     description: The base URL the API is running on, with a ws prefix.
+  - name: host
+    value: localhost
+    description: ""
+  - name: port
+    value: "3001"
+    description: ""

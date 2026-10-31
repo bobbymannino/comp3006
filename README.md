@@ -16,7 +16,7 @@ To run the image:
 ```sh
 docker run --rm \
     -p 3000:3000 \
-    -e PORT=3000 \
+    -e API_PORT=3000 \
     -e MONGO_USER=bob \
     -e MONGO_PASS=change_me \
     -e MONGO_HOST=host.docker.internal \

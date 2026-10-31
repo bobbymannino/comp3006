@@ -9,10 +9,11 @@ import {
   handleGetPosts,
   handleUpdatePost,
 } from "./api/posts.ts";
-import { handleCreateLike, handleDeleteLike } from "./api/likes.ts";
+import { handleCreateLike, handleDeleteLike, handleGetLike } from "./api/likes.ts";
 import {
   handleCreateUser,
   handleDeleteUser,
+  handleGetMe,
   handleLoginUser,
   handleUpdateUser,
 } from "./api/users.ts";
@@ -30,11 +31,13 @@ export function createApiServer(port: number) {
   app.put("/api/posts/:id", requireAuth, handleUpdatePost);
   app.delete("/api/posts/:id", requireAuth, handleDeletePost);
   // Likes
+  app.get("/api/posts/:id/likes", requireAuth, handleGetLike);
   app.post("/api/posts/:id/likes", requireAuth, handleCreateLike);
   app.delete("/api/posts/:id/likes", requireAuth, handleDeleteLike);
   // Auth
   app.post("/api/auth/signup", handleCreateUser);
   app.post("/api/auth/login", handleLoginUser);
+  app.get("/api/auth/me", requireAuth, handleGetMe);
   // Users
   app.put("/api/users/:id", requireAuth, handleUpdateUser);
   app.delete("/api/users/:id", requireAuth, handleDeleteUser);

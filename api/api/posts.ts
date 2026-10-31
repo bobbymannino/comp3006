@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import * as v from "valibot";
 import type { AuthResponse, OptionalAuthResponse } from "../auth.ts";
-import { isDuplicateKeyError, likes, posts } from "../db.ts";
+import { isDuplicateKeyError, likes, posts, users } from "../db.ts";
 import { broadcastPost } from "../live.ts";
 import { CreatePostBodySchema, PostSchema, UpdatePostBodySchema } from "../schemas.ts";
 import { preview } from "../text.ts";
@@ -31,10 +31,21 @@ export async function handleCreatePost(req: Request, res: AuthResponse) {
     return;
   }
 
-  // Posts start unpublished, publishing is done through an update
+  // Posts start unpublished unless asked, otherwise publishing is done through an update
+  const { published, ...details } = body.output;
   try {
-    const post = await posts.create({ ...body.output, authorId: res.locals.user._id });
+    const post = await posts.create({
+      ...details,
+      authorId: res.locals.user._id,
+      publishedAt: published ? new Date() : null,
+    });
     res.status(201).json({ _id: post._id });
+
+    // A post published straight away is new to the feed, without its author
+    if (published) {
+      const { authorId: _, ...publicPost } = post.toJSON();
+      broadcastPost({ ...publicPost, content: preview(post.content) });
+    }
   } catch (error) {
     if (!isDuplicateKeyError(error)) throw error;
     res.status(409).json({ status: 409, error: "A post with that slug already exists." });
@@ -51,15 +62,21 @@ export async function handleGetPost(req: Request<{ id: string }>, res: OptionalA
     ? { $or: [{ publishedAt: { $ne: null } }, { authorId: user._id }] }
     : { publishedAt: { $ne: null } };
   const post = v.is(PostSchema.entries._id, id)
-    ? await posts.findOne({ _id: id, ...visible }, "-authorId")
+    ? await posts.findOne({ _id: id, ...visible })
     : null;
+  const author = post && (await users.findById(post.authorId, "username displayName"));
 
-  if (!post) {
+  if (!post || !author) {
     res.status(404).json({ status: 404, error: "That post does not exist." });
     return;
   }
 
-  res.status(200).json(post);
+  // A single post says who wrote it, so they can be shown and it can be edited by them
+  res.status(200).json({
+    ...post.toJSON(),
+    authorUsername: author.username,
+    authorDisplayName: author.displayName,
+  });
 }
 
 export async function handleUpdatePost(req: Request<{ id: string }>, res: AuthResponse) {

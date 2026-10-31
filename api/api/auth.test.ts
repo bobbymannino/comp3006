@@ -1,8 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { expect, describe, it, afterAll } from "@jest/globals";
 import * as v from "valibot";
-import { SessionSchema, SignupSchema } from "../schemas.ts";
+import { LoginSchema, MeSchema, SignupSchema } from "../schemas.ts";
 import {
+  createPost,
+  createPublishedPost,
   createUser,
   deleteUser,
   login,
@@ -83,11 +85,17 @@ describe("POST /api/auth/login", () => {
 
     expect(res.status).toBe(201);
     expect(res.headers.get("content-type")).toMatch(/^application\/json/);
-    expect(v.safeParse(SessionSchema, res.body).success).toBe(true);
+    expect(v.safeParse(LoginSchema, res.body).success).toBe(true);
+  });
+
+  it("responds with the user's ID", async () => {
+    const res = await login(users.user);
+
+    expect(v.parse(LoginSchema, res.body)._id).toBe(users.user._id);
   });
 
   it("gives a token that authorizes the user", async () => {
-    const { token } = v.parse(SessionSchema, (await login(users.user)).body);
+    const { token } = v.parse(LoginSchema, (await login(users.user)).body);
     const res = await request("PUT", `/users/${users.user._id}`, { body: {}, as: { token } });
 
     expect(res.status).toBe(200);
@@ -96,8 +104,8 @@ describe("POST /api/auth/login", () => {
   it("gives a new token for each login", async () => {
     const [first, second] = await Promise.all([login(users.user), login(users.user)]);
 
-    expect(v.parse(SessionSchema, first.body).token).not.toBe(
-      v.parse(SessionSchema, second.body).token,
+    expect(v.parse(LoginSchema, first.body).token).not.toBe(
+      v.parse(LoginSchema, second.body).token,
     );
   });
 
@@ -124,6 +132,123 @@ describe("POST /api/auth/login", () => {
   });
 });
 
+describe("GET /api/auth/me", () => {
+  const users = useUsers("user", "other");
+
+  it("responds with 200 and the logged in user's details", async () => {
+    const res = await request("GET", "/auth/me", { as: users.user });
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toMatch(/^application\/json/);
+    expect(v.parse(MeSchema, res.body)).toMatchObject({
+      _id: users.user._id,
+      username: users.user.username,
+      email: users.user.email,
+      displayName: users.user.displayName,
+    });
+  });
+
+  it("never returns the password hash", async () => {
+    const res = await request("GET", "/auth/me", { as: users.user });
+
+    expect(res.body).not.toHaveProperty("passwordHash");
+  });
+
+  it("responds with whoever the token belongs to", async () => {
+    const [userRes, otherRes] = await Promise.all([
+      request("GET", "/auth/me", { as: users.user }),
+      request("GET", "/auth/me", { as: users.other }),
+    ]);
+
+    expect(userRes.body).toHaveProperty("_id", users.user._id);
+    expect(otherRes.body).toHaveProperty("_id", users.other._id);
+  });
+
+  it("works with a token from logging in", async () => {
+    const { token } = v.parse(LoginSchema, (await login(users.user)).body);
+    const res = await request("GET", "/auth/me", { as: { token } });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("_id", users.user._id);
+  });
+
+  it("responds with the user's latest details after an update", async () => {
+    const user = await createUser();
+    const displayName = `Renamed ${uniqueId()}`;
+    await request("PUT", `/users/${user._id}`, { body: { displayName }, as: user });
+
+    const res = await request("GET", "/auth/me", { as: user });
+    await deleteUser(user);
+
+    expect(res.body).toHaveProperty("displayName", displayName);
+  });
+
+  it("includes the user's published and unpublished posts", async () => {
+    const user = await createUser();
+    const [published, draft] = await Promise.all([createPublishedPost(user), createPost(user)]);
+    // Another user's post must not be included
+    const others = await createPublishedPost(users.other);
+
+    const res = await request("GET", "/auth/me", { as: user });
+    await deleteUser(user);
+
+    const ids = v.parse(MeSchema, res.body).posts.map((post) => post._id);
+    expect(ids).toHaveLength(2);
+    expect(ids).toEqual(expect.arrayContaining([published._id, draft._id]));
+    expect(ids).not.toContain(others._id);
+  });
+
+  it("says whether the user has liked each of their posts", async () => {
+    const user = await createUser();
+    const [liked, notLiked] = await Promise.all([
+      createPublishedPost(user),
+      createPublishedPost(user),
+    ]);
+    // Only the user's own likes count, not anyone else's
+    await Promise.all([
+      request("POST", `/posts/${liked._id}/likes`, { as: user }),
+      request("POST", `/posts/${notLiked._id}/likes`, { as: users.other }),
+    ]);
+
+    const res = await request("GET", "/auth/me", { as: user });
+    await deleteUser(user);
+
+    const likedById = Object.fromEntries(
+      v.parse(MeSchema, res.body).posts.map((post) => [post._id, post.liked]),
+    );
+    expect(likedById).toEqual({ [liked._id]: true, [notLiked._id]: false });
+  });
+
+  it("says a post is not liked once the like is taken back", async () => {
+    const user = await createUser();
+    const post = await createPublishedPost(user);
+    await request("POST", `/posts/${post._id}/likes`, { as: user });
+    await request("DELETE", `/posts/${post._id}/likes`, { as: user });
+
+    const res = await request("GET", "/auth/me", { as: user });
+    await deleteUser(user);
+
+    expect(v.parse(MeSchema, res.body).posts).toEqual([
+      expect.objectContaining({ _id: post._id, liked: false }),
+    ]);
+  });
+
+  it("responds with no posts for a user who has not written any", async () => {
+    const res = await request("GET", "/auth/me", { as: users.user });
+
+    expect(v.parse(MeSchema, res.body).posts).toEqual([]);
+  });
+
+  it("rejects the token of a deleted user", async () => {
+    const user = await createUser();
+    await deleteUser(user);
+
+    const res = await request("GET", "/auth/me", { as: user });
+
+    expect(res.status).toBe(401);
+  });
+});
+
 // These endpoints require a bearer token
 describe("unauthorized requests", () => {
   // Auth is checked before the route looks anything up, so the IDs need not exist
@@ -134,6 +259,7 @@ describe("unauthorized requests", () => {
     ["DELETE", `/posts/${id}`],
     ["POST", `/posts/${id}/likes`],
     ["DELETE", `/posts/${id}/likes`],
+    ["GET", "/auth/me"],
     ["PUT", `/users/${id}`],
     ["DELETE", `/users/${id}`],
   ];
@@ -146,7 +272,9 @@ describe("unauthorized requests", () => {
 
   describe.each(routes)("%s /api%s", (method, path) => {
     it.each(credentials)("responds with 401 for %s", async (_, headers) => {
-      const res = await request(method, path, { body: {}, headers });
+      // fetch cannot send a body with a GET
+      const body = method === "GET" ? undefined : {};
+      const res = await request(method, path, { body, headers });
 
       expect(res.status).toBe(401);
       expect(res.headers.get("content-type")).toMatch(/^application\/json/);

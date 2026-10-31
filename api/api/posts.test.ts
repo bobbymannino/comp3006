@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { expect, describe, it, beforeAll } from "@jest/globals";
 import * as v from "valibot";
-import { CreatedSchema, PostSchema, PublicPostSchema } from "../schemas.ts";
+import { CreatedSchema, PostSchema, PostWithAuthorSchema, PublicPostSchema } from "../schemas.ts";
 import {
   createPost,
   createPublishedPost,
@@ -90,7 +90,15 @@ describe("POST /api/posts", () => {
     const post = await createPost(users.author);
     const res = await request("GET", `/posts/${post._id}`, { as: users.author });
 
-    expect(v.parse(PublicPostSchema, res.body).publishedAt).toBeNull();
+    expect(v.parse(PostWithAuthorSchema, res.body).publishedAt).toBeNull();
+  });
+
+  it("creates the post published when asked", async () => {
+    const post = await createPost(users.author, { published: true });
+    const res = await request("GET", `/posts/${post._id}`);
+
+    expect(res.status).toBe(200);
+    expect(v.parse(PostWithAuthorSchema, res.body).publishedAt).not.toBeNull();
   });
 
   it("requires auth", async () => {
@@ -134,7 +142,18 @@ describe("GET /api/posts/:id", () => {
     const res = await request("GET", `/posts/${post._id}`);
 
     expect(res.status).toBe(200);
-    expect(v.parse(PublicPostSchema, res.body)).toMatchObject(post);
+    expect(v.parse(PostWithAuthorSchema, res.body)).toMatchObject(post);
+  });
+
+  it("includes the post's author", async () => {
+    const post = await createPublishedPost(users.author);
+    const res = await request("GET", `/posts/${post._id}`);
+
+    expect(v.parse(PostWithAuthorSchema, res.body)).toMatchObject({
+      authorId: users.author._id,
+      authorUsername: users.author.username,
+      authorDisplayName: users.author.displayName,
+    });
   });
 
   it("returns an unpublished post to its author", async () => {
