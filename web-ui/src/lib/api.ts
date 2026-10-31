@@ -4,6 +4,7 @@ import type {
   CreatedSchema,
   CreatePostBodySchema,
   LoginBodySchema,
+  MeSchema,
   PostWithAuthorSchema,
   PublicPostSchema,
   SessionSchema,
@@ -134,5 +135,12 @@ export function createPost(body: v.InferInput<typeof CreatePostBodySchema>, bear
     method: "POST",
     headers: auth(bearerToken),
     body: JSON.stringify(body),
+  });
+}
+
+/** Get the current users account information and posts */
+export function getMe(bearerToken: string) {
+  return request<v.InferOutput<typeof MeSchema>>("/api/auth/me", {
+    headers: auth(bearerToken),
   });
 }

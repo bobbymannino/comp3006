@@ -134,10 +134,7 @@ export async function handleDeleteUser(req: Request<{ id: string }>, res: AuthRe
  * created/updated at, and a list of all their published and unpublished posts.
  */
 export async function handleGetMe(_req: Request, res: AuthResponse) {
-  const user = await users.findOne(
-    { _id: res.locals.user.id },
-    "_id username email displayName createdAt updatedAt",
-  );
+  const user = await users.findOne({ _id: res.locals.user.id }, "-passwordHash");
   if (!user) {
     res.status(404).json({ status: 404, error: "User not found." });
     return;

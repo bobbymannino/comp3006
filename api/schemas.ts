@@ -88,3 +88,9 @@ export const CreatePostBodySchema = v.strictObject({
 
 /** The body to update a post with, which can also publish or unpublish it */
 export const UpdatePostBodySchema = v.partial(CreatePostBodySchema);
+
+/** The schema of an accounts information and posts */
+export const MeSchema = v.strictObject({
+  ...UserSchema.entries,
+  posts: v.array(PostSchema),
+});
