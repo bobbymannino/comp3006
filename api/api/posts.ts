@@ -64,7 +64,7 @@ export async function handleGetPost(req: Request<{ id: string }>, res: OptionalA
   const post = v.is(PostSchema.entries._id, id)
     ? await posts.findOne({ _id: id, ...visible })
     : null;
-  const author = post && (await users.findById(post.authorId, "displayName"));
+  const author = post && (await users.findById(post.authorId, "username displayName"));
 
   if (!post || !author) {
     res.status(404).json({ status: 404, error: "That post does not exist." });
@@ -72,7 +72,11 @@ export async function handleGetPost(req: Request<{ id: string }>, res: OptionalA
   }
 
   // A single post says who wrote it, so they can be shown and it can be edited by them
-  res.status(200).json({ ...post.toJSON(), authorDisplayName: author.displayName });
+  res.status(200).json({
+    ...post.toJSON(),
+    authorUsername: author.username,
+    authorDisplayName: author.displayName,
+  });
 }
 
 export async function handleUpdatePost(req: Request<{ id: string }>, res: AuthResponse) {

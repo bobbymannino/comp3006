@@ -151,6 +151,7 @@ describe("GET /api/posts/:id", () => {
 
     expect(v.parse(PostWithAuthorSchema, res.body)).toMatchObject({
       authorId: users.author._id,
+      authorUsername: users.author.username,
       authorDisplayName: users.author.displayName,
     });
   });

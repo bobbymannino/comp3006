@@ -34,9 +34,10 @@ export const UserSchema = v.strictObject({
   updatedAt: date,
 });
 
-/** A single post as returned by the API, with its author's display name */
+/** A single post as returned by the API, with its author's username and display name */
 export const PostWithAuthorSchema = v.strictObject({
   ...PostSchema.entries,
+  authorUsername: UserSchema.entries.username,
   authorDisplayName: UserSchema.entries.displayName,
 });
 

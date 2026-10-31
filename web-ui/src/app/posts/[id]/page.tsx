@@ -82,7 +82,11 @@ async function Post({ params }: Pick<PageProps<"/posts/[id]">, "params">) {
                   dateStyle: "medium",
                 })}
               </time>
-              •<span>By {post.authorDisplayName}</span>•
+              •
+              <span>
+                @{post.authorUsername} ({post.authorDisplayName})
+              </span>
+              •
             </>
           ) : (
             // Only the author can see an unpublished post
