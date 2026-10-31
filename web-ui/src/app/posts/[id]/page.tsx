@@ -7,6 +7,7 @@ import { LikeButton } from "@/components/LikeButton";
 import { buttonVariants } from "@/components/ui/button";
 import { ApiError, getLiked, getPost } from "@/lib/api";
 import { getSession } from "@/lib/session";
+import { Main } from "@/components/main";
 
 /** Get a post as the current user, cached so the metadata and page share one request */
 const loadPost = cache(async (id: string) => getPost(id, await getSession()));
@@ -24,12 +25,12 @@ export async function generateMetadata({
 
 export default function PostPage({ params }: PageProps<"/posts/[id]">) {
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-8">
+    <Main>
       <Link
         href="/"
         className={buttonVariants({
           variant: "ghost",
-          className: "mb-6 -ml-2.5",
+          className: "-ml-2.5 self-start",
         })}
       >
         <ArrowLeftIcon aria-hidden />
@@ -41,7 +42,7 @@ export default function PostPage({ params }: PageProps<"/posts/[id]">) {
       >
         <Post params={params} />
       </Suspense>
-    </main>
+    </Main>
   );
 }
 
@@ -72,7 +73,7 @@ async function Post({ params }: Pick<PageProps<"/posts/[id]">, "params">) {
   return (
     <article>
       <header className="mb-6 flex flex-col gap-2 border-b pb-6">
-        <h1 className="text-3xl font-bold">{post.title}</h1>
+        <h1>{post.title}</h1>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
           {post.publishedAt ? (
             <>

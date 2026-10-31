@@ -7,13 +7,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { PostForm } from "./post-form";
+import { Main } from "@/components/main";
 
 export const metadata: Metadata = { title: "New post" };
 
 /** Write a new post. Logged out users are sent to log in by the proxy */
 export default function NewPostPage() {
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-8">
+    <Main>
       <Card>
         <CardHeader>
           <CardTitle>New post</CardTitle>
@@ -25,6 +26,6 @@ export default function NewPostPage() {
           <PostForm />
         </CardContent>
       </Card>
-    </main>
+    </Main>
   );
 }

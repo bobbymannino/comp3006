@@ -9,12 +9,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { LoginForm } from "./login-form";
+import { Main } from "@/components/main";
 
 export const metadata: Metadata = { title: "Login" };
 
 export default function LoginPage() {
   return (
-    <main className="mx-auto w-full max-w-sm px-4 py-12">
+    <Main width="narrow">
       <Card>
         <CardHeader>
           <CardTitle>Log in</CardTitle>
@@ -32,6 +33,6 @@ export default function LoginPage() {
           </p>
         </CardFooter>
       </Card>
-    </main>
+    </Main>
   );
 }

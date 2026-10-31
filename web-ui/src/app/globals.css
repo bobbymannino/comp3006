@@ -126,4 +126,34 @@
   html {
     @apply font-sans;
   }
+
+  /* Default text styles. They are in the base layer so utility classes on an
+     element still override them, and have no margins as layouts use gaps */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading font-bold tracking-tight text-balance;
+  }
+  h1 {
+    @apply text-3xl;
+  }
+  h2 {
+    @apply text-2xl;
+  }
+  h3 {
+    @apply text-xl;
+  }
+  h4 {
+    @apply text-lg;
+  }
+  h5,
+  h6 {
+    @apply text-base;
+  }
+  p {
+    @apply leading-7 text-pretty;
+  }
 }
