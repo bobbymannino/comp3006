@@ -1,10 +1,12 @@
-name: API image
+name: Web UI image
 
 on:
   push:
     branches: [main]
     paths:
       - web-ui/**
+      # The web UI imports the API's schemas, so it is rebuilt when they change
+      - api/schemas.ts
       - .github/workflows/web-ui-image.yml
   workflow_dispatch:
 
@@ -40,13 +42,15 @@ jobs:
         with:
           images: ${{ env.IMAGE }}
           tags: |
-            type=raw,value=latest
-            type=raw,value=v${{ steps.version.outputs.version }}
             type=sha
+            type=raw,value=v${{ steps.version.outputs.version }}
+            type=raw,value=latest
 
       - uses: docker/build-push-action@v7
         with:
-          context: api
+          # Built from the repo root, as the web UI imports the API's schemas
+          context: .
+          file: web-ui/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

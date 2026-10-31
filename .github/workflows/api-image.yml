@@ -40,9 +40,9 @@ jobs:
         with:
           images: ${{ env.IMAGE }}
           tags: |
-            type=raw,value=latest
-            type=raw,value=v${{ steps.version.outputs.version }}
             type=sha
+            type=raw,value=v${{ steps.version.outputs.version }}
+            type=raw,value=latest
 
       - uses: docker/build-push-action@v7
         with:
