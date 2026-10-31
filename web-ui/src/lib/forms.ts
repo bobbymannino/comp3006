@@ -1,5 +1,5 @@
 import * as v from "valibot";
-import { LoginBodySchema, SignupBodySchema } from "../../../api/schemas";
+import { CreatePostBodySchema, LoginBodySchema, SignupBodySchema } from "../../../api/schemas";
 
 // The form schemas reuse the API's rules so both sides always agree, only the
 // messages are added here as the API's are not written for users
@@ -23,6 +23,18 @@ const login = LoginBodySchema.entries;
 export const LoginFormSchema = v.object({
   username: v.message(v.pipe(login.username, v.nonEmpty()), "Enter your username."),
   password: v.message(v.pipe(login.password, v.nonEmpty()), "Enter your password."),
+});
+
+const post = CreatePostBodySchema.entries;
+
+/** The fields of the new post form. Content is optional, so an empty post can be written later */
+export const PostFormSchema = v.object({
+  title: v.message(post.title, "Enter a title."),
+  slug: v.message(
+    post.slug,
+    "Use lowercase letters and numbers, with single dashes between words.",
+  ),
+  content: v.message(v.string(), "Enter the content."),
 });
 
 /** Turn a title into a slug the API accepts, e.g. "Hello, World!" becomes "hello-world" */
