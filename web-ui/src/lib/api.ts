@@ -4,6 +4,7 @@ import type {
   CreatedSchema,
   CreatePostBodySchema,
   LoginBodySchema,
+  PostWithAuthorSchema,
   PublicPostSchema,
   SessionSchema,
   SignupBodySchema,
@@ -61,6 +62,9 @@ export function login(body: v.InferInput<typeof LoginBodySchema>) {
 /** A post as shown publicly, with its content cut down to a preview in lists */
 export type PublicPost = v.InferOutput<typeof PublicPostSchema>;
 
+/** A single post in full, with who wrote it */
+export type PostWithAuthor = v.InferOutput<typeof PostWithAuthorSchema>;
+
 /** The header to send a session token with, if there is one */
 function auth(token?: string): HeadersInit {
   return token ? { Authorization: `Bearer ${token}` } : {};
@@ -76,7 +80,7 @@ export function getPosts(page = 1) {
  * so their token is sent when logged in
  */
 export function getPost(id: string, token?: string) {
-  return request<PublicPost>(`/api/posts/${encodeURIComponent(id)}`, {
+  return request<PostWithAuthor>(`/api/posts/${encodeURIComponent(id)}`, {
     headers: auth(token),
   });
 }

@@ -51,7 +51,9 @@ async function Post({ params }: Pick<PageProps<"/posts/[id]">, "params">) {
   const token = await getSession();
   // Checked alongside the post rather than after it. If it cannot be checked
   // the post is shown as not liked rather than failing
-  const likedRequest = token ? getLiked(id, token).catch(() => false) : undefined;
+  const likedRequest = token
+    ? getLiked(id, token).catch(() => false)
+    : undefined;
 
   let post;
   try {
@@ -73,17 +75,25 @@ async function Post({ params }: Pick<PageProps<"/posts/[id]">, "params">) {
         <h1 className="text-3xl font-bold">{post.title}</h1>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
           {post.publishedAt ? (
-            <time dateTime={post.publishedAt}>
-              {new Date(post.publishedAt).toLocaleDateString("en-GB", {
-                dateStyle: "medium",
-              })}
-            </time>
+            <>
+              <time dateTime={post.publishedAt}>
+                {new Date(post.publishedAt).toLocaleDateString("en-GB", {
+                  dateStyle: "medium",
+                })}
+              </time>
+              •<span>By {post.authorDisplayName}</span>•
+            </>
           ) : (
             // Only the author can see an unpublished post
             <span>Draft, only you can see this</span>
           )}
+
           {post.publishedAt ? (
-            <LikeButton postId={post._id} likeCount={post.likeCount} liked={liked} />
+            <LikeButton
+              postId={post._id}
+              likeCount={post.likeCount}
+              liked={liked}
+            />
           ) : (
             // Only published posts can be liked
             <span className="flex items-center gap-1">
