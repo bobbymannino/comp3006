@@ -143,5 +143,7 @@ export async function handleGetMe(req: Request, res: AuthResponse) {
     return;
   }
 
-  res.json({ ...user, posts: [] });
+  const userPosts = await posts.find({ authorId: user._id });
+
+  res.json({ ...user.toJSON(), posts: userPosts });
 }
