@@ -38,6 +38,9 @@ function NavUser() {
       <Link href="/" className={buttonVariants({ variant: "ghost" })}>
         Posts
       </Link>
+      <Link href="/posts/new" className={buttonVariants({ variant: "ghost" })}>
+        New post
+      </Link>
       <form action={logoutAction}>
         <Button type="submit" variant="outline">
           Log out
