@@ -9,6 +9,7 @@ import { ApiError, getLiked, getMe, getPost } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { Main } from "@/components/main";
 import { DeletePostButton } from "./delete-post-button";
+import EditPostButton from "./edit-post-button";
 
 /** Get a post as the current user, cached so the metadata and page share one request */
 const loadPost = cache(async (id: string) => getPost(id, await getSession()));
@@ -78,7 +79,7 @@ async function Post({ params }: Pick<PageProps<"/posts/[id]">, "params">) {
     <article>
       <header className="mb-6 flex flex-col gap-2 border-b pb-6">
         <h1>{post.title}</h1>
-        <div className="flex items-center gap-3 justify-between">
+        <div className="flex items-center gap-3 justify-between flex-wrap">
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
             {post.publishedAt ? (
               <>
@@ -112,7 +113,12 @@ async function Post({ params }: Pick<PageProps<"/posts/[id]">, "params">) {
               </span>
             )}
           </div>
-          {me && post.authorId === me._id && <DeletePostButton postId={post._id} />}
+          {me && post.authorId === me._id && (
+            <div className="flex gap-1">
+              <EditPostButton postId={post._id} />
+              <DeletePostButton postId={post._id} />
+            </div>
+          )}
         </div>
       </header>
       {/* Content is plain text, so keep its line breaks */}
