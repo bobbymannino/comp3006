@@ -7,6 +7,7 @@ import { loadPostsAction } from "@/app/actions";
 import { PostPreviewCard } from "@/components/PostPreviewCard";
 import { Button } from "@/components/ui/button";
 import type { LikeablePost } from "@/lib/api";
+import PostList from "./PostList";
 
 /** Where the API sends newly published posts, this is public as the browser connects to it */
 const LIVE_URL =
@@ -34,7 +35,11 @@ function withoutDuplicates(current: LikeablePost[], added: LikeablePost[]) {
  * A list of posts, which adds newly published posts to the top as they happen
  * and loads the next page when scrolled to the bottom
  */
-export function LivePostList({ initialPosts }: { initialPosts: LikeablePost[] }) {
+export function LivePostList({
+  initialPosts,
+}: {
+  initialPosts: LikeablePost[];
+}) {
   const [posts, setPosts] = useState(initialPosts);
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<Status>("idle");
@@ -128,13 +133,7 @@ export function LivePostList({ initialPosts }: { initialPosts: LikeablePost[] })
 
   return (
     <>
-      <ul className="grid gap-4 sm:grid-cols-2">
-        {posts.map((post) => (
-          <li key={post._id} className="flex *:flex-1">
-            <PostPreviewCard post={post} />
-          </li>
-        ))}
-      </ul>
+      <PostList posts={posts} />
 
       {/* Tells screen readers about live posts, which appear out of view at the top */}
       <p role="status" className="sr-only">
