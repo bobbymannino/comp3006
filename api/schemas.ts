@@ -89,8 +89,8 @@ export const CreatePostBodySchema = v.strictObject({
 /** The body to update a post with, which can also publish or unpublish it */
 export const UpdatePostBodySchema = v.partial(CreatePostBodySchema);
 
-/** The schema of an accounts information and posts */
+/** The schema of an accounts information and posts, with whether they have liked each post */
 export const MeSchema = v.strictObject({
   ...UserSchema.entries,
-  posts: v.array(PostSchema),
+  posts: v.array(v.strictObject({ ...PostSchema.entries, liked: v.boolean() })),
 });

@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { expect, describe, it, afterAll } from "@jest/globals";
 import * as v from "valibot";
-import { LoginSchema, SignupSchema, UserSchema } from "../schemas.ts";
+import { LoginSchema, MeSchema, SignupSchema } from "../schemas.ts";
 import {
   createPost,
   createPublishedPost,
@@ -135,12 +135,6 @@ describe("POST /api/auth/login", () => {
 describe("GET /api/auth/me", () => {
   const users = useUsers("user", "other");
 
-  /** The logged in user's details, along with their posts */
-  const MeSchema = v.strictObject({
-    ...UserSchema.entries,
-    posts: v.array(v.looseObject({ _id: v.string() })),
-  });
-
   it("responds with 200 and the logged in user's details", async () => {
     const res = await request("GET", "/auth/me", { as: users.user });
 
@@ -202,6 +196,41 @@ describe("GET /api/auth/me", () => {
     expect(ids).toHaveLength(2);
     expect(ids).toEqual(expect.arrayContaining([published._id, draft._id]));
     expect(ids).not.toContain(others._id);
+  });
+
+  it("says whether the user has liked each of their posts", async () => {
+    const user = await createUser();
+    const [liked, notLiked] = await Promise.all([
+      createPublishedPost(user),
+      createPublishedPost(user),
+    ]);
+    // Only the user's own likes count, not anyone else's
+    await Promise.all([
+      request("POST", `/posts/${liked._id}/likes`, { as: user }),
+      request("POST", `/posts/${notLiked._id}/likes`, { as: users.other }),
+    ]);
+
+    const res = await request("GET", "/auth/me", { as: user });
+    await deleteUser(user);
+
+    const likedById = Object.fromEntries(
+      v.parse(MeSchema, res.body).posts.map((post) => [post._id, post.liked]),
+    );
+    expect(likedById).toEqual({ [liked._id]: true, [notLiked._id]: false });
+  });
+
+  it("says a post is not liked once the like is taken back", async () => {
+    const user = await createUser();
+    const post = await createPublishedPost(user);
+    await request("POST", `/posts/${post._id}/likes`, { as: user });
+    await request("DELETE", `/posts/${post._id}/likes`, { as: user });
+
+    const res = await request("GET", "/auth/me", { as: user });
+    await deleteUser(user);
+
+    expect(v.parse(MeSchema, res.body).posts).toEqual([
+      expect.objectContaining({ _id: post._id, liked: false }),
+    ]);
   });
 
   it("responds with no posts for a user who has not written any", async () => {

@@ -142,5 +142,18 @@ export async function handleGetMe(_req: Request, res: AuthResponse) {
 
   const userPosts = await posts.find({ authorId: user._id });
 
-  res.json({ ...user.toJSON(), posts: userPosts });
+  // One query for every post's like, rather than one per post
+  const userLikes = await likes.find(
+    { userId: user._id, postId: { $in: userPosts.map((post) => post._id) } },
+    "postId",
+  );
+  const likedIds = new Set(userLikes.map((like) => like.postId.toString()));
+
+  res.json({
+    ...user.toJSON(),
+    posts: userPosts.map((post) => ({
+      ...post.toJSON(),
+      liked: likedIds.has(post._id.toString()),
+    })),
+  });
 }
