@@ -13,6 +13,7 @@ import { handleCreateLike, handleDeleteLike, handleGetLike } from "./api/likes.t
 import {
   handleCreateUser,
   handleDeleteUser,
+  handleGetMe,
   handleLoginUser,
   handleUpdateUser,
 } from "./api/users.ts";
@@ -36,6 +37,7 @@ export function createApiServer(port: number) {
   // Auth
   app.post("/api/auth/signup", handleCreateUser);
   app.post("/api/auth/login", handleLoginUser);
+  app.get("/api/auth/me", requireAuth, handleGetMe);
   // Users
   app.put("/api/users/:id", requireAuth, handleUpdateUser);
   app.delete("/api/users/:id", requireAuth, handleDeleteUser);

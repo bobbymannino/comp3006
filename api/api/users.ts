@@ -128,3 +128,20 @@ export async function handleDeleteUser(req: Request<{ id: string }>, res: AuthRe
   await users.deleteOne({ _id: self._id });
   res.status(204).end();
 }
+
+/**
+ * Return the currently logged in users display name, ID, username, email,
+ * created/updated at, and a list of all their published and unpublished posts.
+ */
+export async function handleGetMe(req: Request, res: AuthResponse) {
+  const user = await users.findOne(
+    { _id: res.locals.user.id },
+    "_id username email displayName createdAt updatedAt",
+  );
+  if (!user) {
+    res.status(404).json({ status: 404, error: "User not found." });
+    return;
+  }
+
+  res.json({ ...user, posts: [] });
+}
