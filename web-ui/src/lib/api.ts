@@ -10,6 +10,7 @@ import type {
   SessionSchema,
   SignupBodySchema,
   SignupSchema,
+  UpdatePostBodySchema,
   UpdateUserBodySchema,
   UserSchema,
 } from "../../../api/schemas";
@@ -173,5 +174,18 @@ export function deletePost(postId: string, bearerToken: string) {
   return request<unknown>(`/api/posts/${encodeURIComponent(postId)}`, {
     method: "DELETE",
     headers: auth(bearerToken),
+  });
+}
+
+/** Update one of the logged in user's posts, changing only the fields given */
+export function updatePost(
+  postId: string,
+  body: v.InferInput<typeof UpdatePostBodySchema>,
+  bearerToken: string,
+) {
+  return request<unknown>(`/api/posts/${encodeURIComponent(postId)}`, {
+    method: "PUT",
+    headers: auth(bearerToken),
+    body: JSON.stringify(body),
   });
 }
