@@ -17,6 +17,15 @@ export const SignupFormSchema = v.object({
   password: v.message(signup.password, "Enter a password."),
 });
 
+/**
+ * The fields of the edit account form. The password is left empty to keep the
+ * current one, so any value is allowed
+ */
+export const EditAccountFormSchema = v.object({
+  ...SignupFormSchema.entries,
+  password: v.string(),
+});
+
 const login = LoginBodySchema.entries;
 
 /** The fields of the login form. The API accepts empty values, so they are rejected here */

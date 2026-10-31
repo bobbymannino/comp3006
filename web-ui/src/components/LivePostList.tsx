@@ -150,7 +150,7 @@ export function LivePostList({
         {status === "error" && (
           <>
             <p className="text-destructive">{error}</p>
-            <Button variant="outline" onClick={loadMore}>
+            <Button variant="secondary" onClick={loadMore}>
               Try again
             </Button>
           </>

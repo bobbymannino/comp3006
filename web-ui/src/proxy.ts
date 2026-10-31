@@ -6,7 +6,7 @@ import { TOKEN_COOKIE } from "@/lib/session";
 const ANON_ONLY = ["/login", "/signup"];
 
 /** Pages only for logged in users */
-const LOGGED_IN_ONLY = ["/posts/new", "/account"];
+const LOGGED_IN_ONLY = ["/posts/new", "/account", "/account/edit"];
 
 /**
  * Send logged in users away from the login and sign up pages, and logged out
@@ -28,5 +28,5 @@ export const proxy: NextProxy = (request) => {
 };
 
 export const config = {
-  matcher: ["/login", "/signup", "/posts/new", "/account"],
+  matcher: ["/login", "/signup", "/posts/new", "/account", "/account/edit"],
 } satisfies ProxyConfig;

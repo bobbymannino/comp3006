@@ -40,7 +40,10 @@ function NavUser() {
       <Link href="/posts/new" className={buttonVariants({ variant: "ghost" })}>
         New post
       </Link>
-      <Link href="/account" className={buttonVariants({ variant: "outline" })}>
+      <Link
+        href="/account"
+        className={buttonVariants({ variant: "secondary" })}
+      >
         Account
       </Link>
     </>
@@ -54,7 +57,7 @@ function NavAnon() {
       <Link href="/login" className={buttonVariants({ variant: "ghost" })}>
         Log in
       </Link>
-      <Link href="/signup" className={buttonVariants()}>
+      <Link href="/signup" className={buttonVariants({ variant: "secondary" })}>
         Sign up
       </Link>
     </>

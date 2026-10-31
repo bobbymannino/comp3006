@@ -1,3 +1,6 @@
+import { PencilIcon } from "lucide-react";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 import { ApiError, getMe } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { notFound, redirect } from "next/navigation";
@@ -13,11 +16,6 @@ export default function AccountPage() {
       <Suspense fallback={<h2 aria-live="polite">Loading account...</h2>}>
         <Account />
       </Suspense>
-
-      <div className="flex flex-wrap items-start gap-2">
-        <LogOutButton />
-        <DeleteAccountButton />
-      </div>
     </Main>
   );
 }
@@ -57,6 +55,18 @@ async function Account() {
             Updated {updatedAt.toLocaleString()}
           </time>
         </small>
+      </div>
+      <hr />
+      <div className="flex flex-wrap items-start gap-2">
+        <Link
+          href="/account/edit"
+          className={buttonVariants({ variant: "secondary" })}
+        >
+          <PencilIcon />
+          <span>Edit Account</span>
+        </Link>
+        <LogOutButton />
+        <DeleteAccountButton />
       </div>
       {me.posts.length === 0 ? (
         <p>You have no posts yet.</p>

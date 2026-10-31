@@ -10,6 +10,8 @@ import type {
   SessionSchema,
   SignupBodySchema,
   SignupSchema,
+  UpdateUserBodySchema,
+  UserSchema,
 } from "../../../api/schemas";
 
 /** Where the API is, only used from the server so it is never sent to the browser */
@@ -150,5 +152,18 @@ export function deleteUser(userId: string, bearerToken: string) {
   return request<unknown>(`/api/users/${encodeURIComponent(userId)}`, {
     method: "DELETE",
     headers: auth(bearerToken),
+  });
+}
+
+/** Update the logged in user, changing only the fields given. Users can only update themselves */
+export function updateUser(
+  userId: string,
+  body: v.InferInput<typeof UpdateUserBodySchema>,
+  bearerToken: string,
+) {
+  return request<v.InferOutput<typeof UserSchema>>(`/api/users/${encodeURIComponent(userId)}`, {
+    method: "PUT",
+    headers: auth(bearerToken),
+    body: JSON.stringify(body),
   });
 }
