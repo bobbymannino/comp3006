@@ -144,3 +144,11 @@ export function getMe(bearerToken: string) {
     headers: auth(bearerToken),
   });
 }
+
+/** Delete a user along with their posts and likes. Users can only delete themselves */
+export function deleteUser(userId: string, bearerToken: string) {
+  return request<unknown>(`/api/users/${encodeURIComponent(userId)}`, {
+    method: "DELETE",
+    headers: auth(bearerToken),
+  });
+}

@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { ApiError, getPosts, likePost, unlikePost, withLiked } from "@/lib/api";
+import { ApiError, deleteUser, getMe, getPosts, likePost, unlikePost, withLiked } from "@/lib/api";
 import { deleteSession, getSession } from "@/lib/session";
 
 /**
@@ -53,4 +53,34 @@ export async function setLikedAction(postId: string, liked: boolean) {
 
     return { error: error.message };
   }
+}
+
+/**
+ * Delete the logged in user's account, along with their posts and likes, then
+ * log them out. Errors are returned rather than thrown
+ */
+export async function deleteAccountAction(): Promise<{ error?: string }> {
+  const token = await getSession();
+  if (!token) redirect("/login");
+
+  try {
+    // The ID is looked up from the session, so only the user's own account can be deleted
+    const me = await getMe(token);
+    await deleteUser(me._id, token);
+  } catch (error) {
+    if (!(error instanceof ApiError)) throw error;
+
+    // The session has expired or ended on the API
+    if (error.status === 401) {
+      await deleteSession();
+      redirect("/login");
+    }
+
+    return { error: error.message };
+  }
+
+  // Outside the try as it works by throwing. The API ends every session of a
+  // deleted user, so the token is only forgotten here
+  await deleteSession();
+  redirect("/");
 }

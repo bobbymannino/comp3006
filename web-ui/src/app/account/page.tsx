@@ -1,12 +1,11 @@
-import { logoutAction } from "@/app/actions";
-import { Button } from "@/components/ui/button";
 import { ApiError, getMe } from "@/lib/api";
 import { getSession } from "@/lib/session";
-import { LogOutIcon } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Main } from "@/components/main";
 import PostList from "@/components/PostList";
+import { DeleteAccountButton } from "./delete-account-button";
+import LogOutButton from "./log-out-button";
 
 export default function AccountPage() {
   return (
@@ -15,12 +14,10 @@ export default function AccountPage() {
         <Account />
       </Suspense>
 
-      <form action={logoutAction}>
-        <Button type="submit" variant="destructive">
-          <LogOutIcon />
-          <span>Log Out</span>
-        </Button>
-      </form>
+      <div className="flex flex-wrap items-start gap-2">
+        <LogOutButton />
+        <DeleteAccountButton />
+      </div>
     </Main>
   );
 }
