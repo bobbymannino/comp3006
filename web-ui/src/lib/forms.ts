@@ -25,6 +25,15 @@ export const LoginFormSchema = v.object({
   password: v.message(v.pipe(login.password, v.nonEmpty()), "Enter your password."),
 });
 
+/** Turn a title into a slug the API accepts, e.g. "Hello, World!" becomes "hello-world" */
+export function slugify(title: string) {
+  return title
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 /** The first error for each invalid field */
 export type FieldErrors<TEntries extends v.ObjectEntries> = Partial<
   Record<keyof TEntries, string>
