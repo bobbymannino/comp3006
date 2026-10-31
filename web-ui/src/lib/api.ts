@@ -1,6 +1,8 @@
 import type * as v from "valibot";
 // Type-only, so none of the API's code ends up in the web UI
 import type {
+  CreatedSchema,
+  CreatePostBodySchema,
   LoginBodySchema,
   PublicPostSchema,
   SessionSchema,
@@ -119,5 +121,14 @@ export function unlikePost(postId: string, bearerToken: string) {
   return request<unknown>(`/api/posts/${encodeURIComponent(postId)}/likes`, {
     method: "DELETE",
     headers: auth(bearerToken),
+  });
+}
+
+/** Create a post as the logged in user, unpublished unless `published` is true */
+export function createPost(body: v.InferInput<typeof CreatePostBodySchema>, bearerToken: string) {
+  return request<v.InferOutput<typeof CreatedSchema>>("/api/posts", {
+    method: "POST",
+    headers: auth(bearerToken),
+    body: JSON.stringify(body),
   });
 }
