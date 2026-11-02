@@ -17,6 +17,7 @@ import {
   handleLoginUser,
   handleUpdateUser,
 } from "./api/users.ts";
+import { handleGetHealth } from "./api/health.ts";
 
 const log = logger("api");
 
@@ -24,6 +25,8 @@ export function createApiServer(port: number) {
   log.info(`Creating API server on port ${port}`);
   const app = express().use(express.json());
 
+  // Health, used by the container health check
+  app.get("/api/health", handleGetHealth);
   // Posts
   app.get("/api/posts", handleGetPosts);
   app.post("/api/posts", requireAuth, handleCreatePost);
