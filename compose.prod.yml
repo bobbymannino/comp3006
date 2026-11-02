@@ -1,0 +1,48 @@
+name: bloggy-prod
+
+services:
+  mongo:
+    image: mongo:9
+    restart: unless-stopped
+    # default port is 27017, does not need to be exposed as it is only
+    # consumed within the docker cluster.
+    env_file:
+      - .env.prod
+    volumes:
+      - mongo_data:/data/db
+      # Schema and demo seed data (every seed user's password is "password123")
+      # I know you would not normally seed in production, but this is a demo.
+      - ./mongo/init:/docker-entrypoint-initdb.d:ro
+    # The API connects as soon as it starts, so it waits until this passes
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  api:
+    image: ${DOCKERHUB_USERNAME:-bobbymannino}/comp3006-api:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    env_file:
+      - .env.prod
+    # Published as the browser connects to the live feed directly, at the
+    # NEXT_PUBLIC_LIVE_URL the web UI image was built with (ws://localhost:3001)
+    ports:
+      - "3001:3001"
+
+  web-ui:
+    image: ${DOCKERHUB_USERNAME:-bobbymannino}/comp3006-web-ui:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      - api
+    env_file:
+      - .env.prod
+    ports:
+      - "3000:3000"
+
+volumes:
+  mongo_data:
