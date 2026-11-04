@@ -55,6 +55,22 @@ docker run --rm \
 
 > [!NOTE]
 > `NEXT_PUBLIC_LIVE_URL` is used by the browser, so it is set when the image is
-> built rather than when it runs, with
-> `--build-arg NEXT_PUBLIC_LIVE_URL=ws://localhost:3001/api/posts` (the
-> default).
+> built rather than when it runs. By default it is empty, so the browser
+> connects to `/api/posts` on the page's own host (nginx in production).
+
+## Production
+
+`compose.prod.yml` runs MongoDB, the API, the web UI and nginx. Only nginx is
+published (port 80): `/api` goes to the API, including the live posts WebSocket,
+and everything else goes to the web UI.
+
+```sh
+cp .env.prod.example .env.prod
+
+# Pulls the latest images, needed to avoid caching issues.
+docker compose -f compose.prod.yml pull
+
+docker compose -f compose.prod.yml up -d
+```
+
+Then open <http://localhost>.
