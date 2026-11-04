@@ -36,7 +36,7 @@ export function PostPreviewCard({ post }: { post: LikeablePost }) {
           )}
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 text-muted-foreground">
+      <CardContent className="flex-1 text-muted-foreground line-clamp-3">
         <p>{post.content}</p>
       </CardContent>
       <CardFooter className="text-muted-foreground">
