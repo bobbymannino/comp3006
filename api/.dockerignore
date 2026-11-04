@@ -7,3 +7,6 @@ Dockerfile
 # Tests are not needed in the image
 **/*.test.ts
 test-utils.ts
+
+# Test coverage reports
+coverage

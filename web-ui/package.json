@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:unit": "jest"
+    "test:unit": "jest",
+    "test:unit:coverage": "jest --coverage"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -38,6 +39,16 @@
     "typescript": "^6"
   },
   "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}",
+      "!src/**/*.test.{ts,tsx}",
+      "!src/components/ui/**"
+    ],
+    "coverageProvider": "v8",
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ],
     "moduleDirectories": [
       "node_modules",
       "<rootDir>/node_modules"

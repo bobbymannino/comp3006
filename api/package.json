@@ -15,7 +15,9 @@
   "scripts": {
     "dev": "node --watch index.ts",
     "test": "jest",
-    "test:unit": "jest --testPathIgnorePatterns '<rootDir>/api/'"
+    "test:unit": "jest --testPathIgnorePatterns '<rootDir>/api/'",
+    "test:coverage": "jest --coverage",
+    "test:unit:coverage": "jest --coverage --testPathIgnorePatterns '<rootDir>/api/'"
   },
   "dependencies": {
     "@node-rs/bcrypt": "^2.0.0",
@@ -39,6 +41,18 @@
     "typescript": "^7.0.2"
   },
   "jest": {
+    "collectCoverageFrom": [
+      "**/*.ts",
+      "!**/*.test.ts",
+      "!test-utils.ts",
+      "!**/node_modules/**",
+      "!coverage/**"
+    ],
+    "coverageProvider": "v8",
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ],
     "transform": {
       "^.+\\.ts$": "@swc/jest"
     }
