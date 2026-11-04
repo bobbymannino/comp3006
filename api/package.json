@@ -24,18 +24,18 @@
     "mongoose": "^9.11.4",
     "tslog": "^5.4.0",
     "valibot": "^1.5.0",
-    "ws": "^8.22.0"
+    "ws": "^8.22.1"
   },
   "devDependencies": {
     "@jest/globals": "^30.5.2",
     "@swc/jest": "^0.2.39",
     "@types/express": "^5.0.6",
     "@types/jest": "^30.0.0",
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.6",
     "@types/ws": "^8.18.2",
     "jest": "^30.5.2",
-    "oxfmt": "^0.75.0",
-    "oxlint": "^1.90.0",
+    "oxfmt": "^0.76.0",
+    "oxlint": "^1.91.0",
     "typescript": "^7.0.2"
   },
   "jest": {
