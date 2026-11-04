@@ -9,10 +9,7 @@ const signup = SignupBodySchema.entries;
 /** The fields of the signup form */
 export const SignupFormSchema = v.object({
   displayName: v.message(signup.displayName, "Enter a display name."),
-  username: v.message(
-    signup.username,
-    "Use 3 to 32 lowercase letters, numbers or underscores.",
-  ),
+  username: v.message(signup.username, "Use 3 to 32 lowercase letters, numbers or underscores."),
   email: v.message(signup.email, "Enter a valid email address."),
   password: v.message(signup.password, "Enter a password."),
 });
@@ -56,9 +53,7 @@ export function slugify(title: string) {
 }
 
 /** The first error for each invalid field */
-export type FieldErrors<TEntries extends v.ObjectEntries> = Partial<
-  Record<keyof TEntries, string>
->;
+export type FieldErrors<TEntries extends v.ObjectEntries> = Partial<Record<keyof TEntries, string>>;
 
 /**
  * Check a form's fields against a schema. Only the fields in the schema are
