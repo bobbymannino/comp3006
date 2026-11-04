@@ -4,14 +4,20 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import * as v from "valibot";
 import { PublicPostSchema } from "../../../api/schemas";
 import { loadPostsAction } from "@/app/actions";
-import { PostPreviewCard } from "@/components/PostPreviewCard";
 import { Button } from "@/components/ui/button";
 import type { LikeablePost } from "@/lib/api";
 import PostList from "./PostList";
 
-/** Where the API sends newly published posts, this is public as the browser connects to it */
-const LIVE_URL =
-  process.env.NEXT_PUBLIC_LIVE_URL ?? "ws://localhost:3001/api/posts";
+/**
+ * Where the API sends newly published posts, this is public as the browser
+ * connects to it. When not set (as in the production image, behind nginx) the
+ * feed is on the same host as the page, so it works wherever it is deployed
+ */
+function liveUrl() {
+  if (process.env.NEXT_PUBLIC_LIVE_URL) return process.env.NEXT_PUBLIC_LIVE_URL;
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  return `${protocol}//${window.location.host}/api/posts`;
+}
 
 /** How long to wait before reconnecting when the connection drops */
 const RECONNECT_MS = 3000;
@@ -55,7 +61,7 @@ export function LivePostList({
     let closed = false;
 
     function connect() {
-      socket = new WebSocket(LIVE_URL);
+      socket = new WebSocket(liveUrl());
 
       socket.addEventListener("message", (event) => {
         // Anything that is not a post is ignored rather than breaking the list

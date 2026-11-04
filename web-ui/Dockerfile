@@ -20,8 +20,9 @@ RUN ln -s ../web-ui/node_modules api/node_modules
 COPY web-ui web-ui
 
 # Next writes NEXT_PUBLIC_ variables into the browser's code when it builds, so
-# the live feed's address has to be given now rather than when the image runs
-ARG NEXT_PUBLIC_LIVE_URL=ws://localhost:3001/api/posts
+# the live feed's address has to be given now rather than when the image runs.
+# Empty by default, so the browser uses /api/posts on the page's own host (nginx)
+ARG NEXT_PUBLIC_LIVE_URL=
 ENV NEXT_PUBLIC_LIVE_URL=$NEXT_PUBLIC_LIVE_URL
 RUN npm run build --prefix web-ui
 
