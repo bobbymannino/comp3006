@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 
 import { connect, model, Schema } from "mongoose";
-import * as v from "valibot";
 
+export { isDuplicateKeyError } from "./db-errors.ts";
 import { mongoUrl } from "./env.ts";
 import { logger } from "./log.ts";
 
@@ -108,8 +108,3 @@ export const Session = model("Session", sessionSchema);
 export const sessions = db.model("Session", Session.schema);
 
 log.info("Loaded database");
-
-/** Whether an error is MongoDB rejecting a duplicate on a unique index */
-export function isDuplicateKeyError(error: unknown) {
-  return v.is(v.object({ code: v.literal(11000) }), error);
-}
