@@ -17,7 +17,7 @@
     "format": "oxfmt",
     "test": "jest",
     "test:coverage": "npm run test -- --coverage",
-    "test:unit": "jest --testPathIgnorePatterns '<rootDir>/api/'",
+    "test:unit": "jest --testPathIgnorePatterns '<rootDir>/api/' '<rootDir>/models.test.ts'",
     "test:unit:coverage": "npm run test:unit -- --coverage"
   },
   "dependencies": {
