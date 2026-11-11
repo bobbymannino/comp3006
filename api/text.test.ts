@@ -1,4 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
+
 import { PREVIEW_WORDS, preview } from "./text.ts";
 
 /** A string of `count` numbered words, e.g. "w1 w2 w3" */

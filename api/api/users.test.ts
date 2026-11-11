@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
+
 import { expect, describe, it } from "@jest/globals";
 import * as v from "valibot";
+
 import { UserSchema } from "../schemas.ts";
 import {
   createPost,

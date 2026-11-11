@@ -1,4 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
+
 import { loadEnv, mongoUrl } from "./env.ts";
 
 describe("mongoUrl", () => {

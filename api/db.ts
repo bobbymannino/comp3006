@@ -1,8 +1,10 @@
 import { randomUUID } from "node:crypto";
-import * as v from "valibot";
-import { logger } from "./log.ts";
+
 import { connect, model, Schema } from "mongoose";
+import * as v from "valibot";
+
 import { mongoUrl } from "./env.ts";
+import { logger } from "./log.ts";
 
 const log = logger("db");
 
