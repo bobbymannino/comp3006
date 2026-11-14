@@ -12,14 +12,13 @@ beforeAll(async () => {
 afterAll(async () => {
   await Promise.all([
     User.deleteMany({ _id: { $in: created.users } }),
-    Session.deleteMany({ _id: { $in: created.sessions } }),
+    Session.deleteMany({ userId: { $in: created.users } }),
   ]);
   await disconnect();
 });
 
 const created = {
   users: [] as string[],
-  sessions: [] as string[],
 };
 
 /** Create a demo user */
