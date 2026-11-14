@@ -1,14 +1,12 @@
 import { randomUUID } from "node:crypto";
-import os from "node:os";
 
 import { afterAll, beforeAll, describe, expect, it } from "@jest/globals";
-import { connect, disconnect } from "mongoose";
+import { disconnect } from "mongoose";
 
 import { isDuplicateKeyError } from "./db-errors.ts";
-import { mongoUrl } from "./env.ts";
 import { Like, Post, Session, SESSION_TTL_MS, User } from "./models.ts";
 import { sha256 } from "./sha.ts";
-import { uniqueId } from "./test-utils.ts";
+import { connectTestDb, uniqueId } from "./test-utils.ts";
 
 // Expects MongoDB to already be running. Every document a test creates is
 // recorded here and deleted once all the tests have run
@@ -20,9 +18,7 @@ const created = {
 };
 
 beforeAll(async () => {
-  // The driver loads `os` with a dynamic `import()`, which Jest's CommonJS
-  // sandbox rejects, so hand it over directly
-  await connect(mongoUrl(), { runtimeAdapters: { os } });
+  await connectTestDb();
 });
 
 afterAll(async () => {
