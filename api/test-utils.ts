@@ -1,7 +1,11 @@
 import { randomUUID } from "node:crypto";
+import os from "node:os";
+
 import { afterAll, beforeAll } from "@jest/globals";
+import { connect } from "mongoose";
 import * as v from "valibot";
-import { loadEnv } from "./env.ts";
+
+import { loadEnv, mongoUrl } from "./env.ts";
 import { CreatedSchema, PostWithAuthorSchema, SignupSchema } from "./schemas.ts";
 
 // Expects the API to already be running, e.g. via `npm run dev`
@@ -40,6 +44,14 @@ type RequestOptions = {
   /** Extra headers, e.g. a malformed `Authorization` header */
   headers?: Record<string, string>;
 };
+
+/**
+ * Connect to MongoDB from a test. The driver loads `os` with a dynamic
+ * `import()`, which Jest's CommonJS sandbox rejects, so hand it over directly
+ */
+export function connectTestDb() {
+  return connect(mongoUrl(), { runtimeAdapters: { os } });
+}
 
 /** A short random id, safe to use in usernames and slugs */
 export function uniqueId() {

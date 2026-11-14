@@ -1,6 +1,7 @@
+import * as v from "valibot";
+
 import { createApiServer } from "./api.ts";
 import { loadEnv } from "./env.ts";
-import * as v from "valibot";
 import { logger } from "./log.ts";
 
 const log = logger("index");

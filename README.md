@@ -74,3 +74,29 @@ docker compose -f compose.prod.yml up -d
 ```
 
 Then open <http://localhost>.
+
+## Tests
+
+### API Test Coverage
+
+| File           | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s |
+| -------------- | ------- | -------- | ------- | ------- | ----------------- |
+| **All files**  | 25.63   | 2.77     | 21.42   | 20.78   |                   |
+| api            | 53.64   | 14.28    | 42.85   | 46.4    |                   |
+| > api.ts       | 0       | 100      | 0       | 0       | 23-60             |
+| > auth.ts      | 0       | 0        | 0       | 0       | 20-74             |
+| > db-errors.ts | 100     | 100      | 100     | 100     |                   |
+| > db.ts        | 0       | 100      | 100     | 0       | 10-24             |
+| > env.ts       | 100     | 100      | 100     | 100     |                   |
+| > index.ts     | 0       | 0        | 100     | 0       | 7-15              |
+| > live.ts      | 0       | 0        | 0       | 0       | 7-42              |
+| > log.ts       | 100     | 100      | 100     | 100     |                   |
+| > models.ts    | 100     | 100      | 100     | 100     |                   |
+| > schemas.ts   | 100     | 100      | 100     | 100     |                   |
+| > sha.ts       | 100     | 100      | 100     | 100     |                   |
+| > text.ts      | 100     | 100      | 100     | 100     |                   |
+| api/api        | 0       | 0        | 0       | 0       |                   |
+| > health.ts    | 0       | 0        | 0       | 0       | 7-12              |
+| > likes.ts     | 0       | 0        | 0       | 0       | 11-65             |
+| > posts.ts     | 0       | 0        | 0       | 0       | 10-151            |
+| > users.ts     | 0       | 0        | 0       | 0       | 10-155            |

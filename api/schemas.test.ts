@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
+
 import { describe, expect, it } from "@jest/globals";
 import * as v from "valibot";
+
 import {
   CreatedSchema,
   CreatePostBodySchema,
@@ -13,6 +15,10 @@ import {
   UpdatePostBodySchema,
   UpdateUserBodySchema,
   UserSchema,
+  MeSchema,
+  PostsSchema,
+  LoginSchema,
+  PostWithAuthorSchema,
 } from "./schemas.ts";
 
 const now = new Date().toISOString();
@@ -283,5 +289,80 @@ describe("UpdatePostBodySchema", () => {
     ["authorId", randomUUID()],
   ])("rejects setting %s", (key, value) => {
     expect(v.is(UpdatePostBodySchema, { [key]: value })).toBe(false);
+  });
+});
+
+describe("MeSchema", () => {
+  it("accepts a valid user with posts", () => {
+    expect(v.is(MeSchema, { ...validUser(), posts: [{ ...validPost(), liked: false }] })).toBe(
+      true,
+    );
+  });
+
+  it("accepts user with no posts", () => {
+    expect(v.is(MeSchema, { ...validUser(), posts: [] })).toBe(true);
+  });
+});
+
+describe("PostsSchema", () => {
+  it("accepts a valid post", () => {
+    expect(v.is(PostsSchema, [validPost()])).toBe(true);
+  });
+
+  it("rejects an invalid post", () => {
+    expect(v.is(PostsSchema, [{}])).toBe(false);
+  });
+
+  it("accepts no posts", () => {
+    expect(v.is(PostsSchema, [])).toBe(true);
+  });
+});
+
+describe("LoginSchema", () => {
+  it("accepts a valid user", () => {
+    const user = validUser();
+    expect(
+      v.is(LoginSchema, {
+        _id: user._id,
+        token: user._id,
+        expiresAt: user.updatedAt,
+      }),
+    ).toBe(true);
+  });
+
+  it("rejects an invalid id", () => {
+    const user = validUser();
+    expect(
+      v.is(LoginSchema, {
+        _id: "not a uid",
+        token: user._id,
+        expiresAt: user.updatedAt,
+      }),
+    ).toBe(false);
+  });
+
+  it("rejects an invalid expiresAt", () => {
+    const user = validUser();
+    expect(
+      v.is(LoginSchema, {
+        _id: user._id,
+        token: user._id,
+        expiresAt: "not a date",
+      }),
+    ).toBe(false);
+  });
+});
+
+describe("PostWithAuthorSchema", () => {
+  it("accepts a valid post with author", () => {
+    const post = validPost();
+    const user = validUser();
+    expect(
+      v.is(PostWithAuthorSchema, {
+        ...post,
+        authorUsername: user.username,
+        authorDisplayName: user.displayName,
+      }),
+    ).toBe(true);
   });
 });

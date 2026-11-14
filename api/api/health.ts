@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+
 import { db } from "../db.ts";
 
 /** 200 while the API can reach MongoDB, otherwise 503 */

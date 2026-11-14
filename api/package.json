@@ -14,8 +14,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "node --watch index.ts",
+    "format": "oxfmt",
     "test": "jest",
-    "test:unit": "jest --testPathIgnorePatterns '<rootDir>/api/'",
+    "test:coverage": "npm run test -- --coverage",
+    "test:unit": "jest --testPathIgnorePatterns '<rootDir>/api/' '<rootDir>/models.test.ts' '<rootDir>/auth.test.ts'",
     "test:unit:coverage": "npm run test:unit -- --coverage"
   },
   "dependencies": {
@@ -28,6 +30,7 @@
     "ws": "^8.22.2"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.6.0",
     "@jest/globals": "^30.5.2",
     "@swc/jest": "^0.2.39",
     "@types/express": "^5.0.6",

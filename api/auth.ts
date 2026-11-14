@@ -1,6 +1,8 @@
 import { randomBytes } from "node:crypto";
-import type { Types } from "mongoose";
+
 import type { NextFunction, Request, Response } from "express";
+import type { Types } from "mongoose";
+
 import { sessions, users } from "./db.ts";
 import { sha256 } from "./sha.ts";
 
