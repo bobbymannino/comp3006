@@ -2,7 +2,7 @@ import { it, describe, beforeAll, afterAll, expect, jest } from "@jest/globals";
 import type { NextFunction, Request, Response } from "express";
 import { disconnect } from "mongoose";
 
-import { createSession, requireAuth } from "./auth.ts";
+import { createSession, optionalAuth, requireAuth } from "./auth.ts";
 import { Session, User } from "./models.ts";
 import { sha256 } from "./sha.ts";
 import { connectTestDb, uniqueId } from "./test-utils.ts";
@@ -88,6 +88,18 @@ async function runRequireAuth(authorization?: string) {
   return { res, next };
 }
 
+/** Run optionalAuth with the given header */
+async function runOptionalAuth(authorization?: string) {
+  const res = mockResponse();
+  const next = jest.fn();
+  await optionalAuth(
+    mockRequest(authorization),
+    res as unknown as Response,
+    next as unknown as NextFunction,
+  );
+  return { res, next };
+}
+
 /** Assert requireAuth rejected the request */
 function expectUnauthorised({ res, next }: Awaited<ReturnType<typeof runRequireAuth>>) {
   expect(next).not.toHaveBeenCalled();
@@ -163,5 +175,33 @@ describe("requireAuth", () => {
     await User.deleteOne({ _id: user._id });
 
     expectUnauthorised(await runRequireAuth(`Bearer ${token}`));
+  });
+});
+
+describe("optionalAuth", () => {
+  it("user should exist in locals", async () => {
+    const user = await createTestUser();
+    const { token } = await createSession(user._id);
+
+    const { res, next } = await runOptionalAuth(`Bearer ${token}`);
+    expect(res.statusCode).toBe(200);
+    expect(res.locals.user).toBeDefined();
+    const authed = res.locals.user as InstanceType<typeof User>;
+    expect(authed._id).toEqual(user._id);
+    expect(next).toHaveBeenCalledTimes(1);
+  });
+
+  it("should accept an invalid token", async () => {
+    const { res, next } = await runOptionalAuth("Bearer invalid_token");
+    expect(res.statusCode).toBe(200);
+    expect(res.locals.user).toBeUndefined();
+    expect(next).toHaveBeenCalledTimes(1);
+  });
+
+  it("allow no token", async () => {
+    const { res, next } = await runOptionalAuth();
+    expect(res.statusCode).toBe(200);
+    expect(res.locals.user).toBeUndefined();
+    expect(next).toHaveBeenCalledTimes(1);
   });
 });
