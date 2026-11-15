@@ -1,9 +1,7 @@
 import { randomBytes } from "node:crypto";
-
-import type { NextFunction, Request, Response } from "express";
 import type { Types } from "mongoose";
-
-import { Session, User } from "./models.ts";
+import type { NextFunction, Request, Response } from "express";
+import { sessions, users } from "./db.ts";
 import { sha256 } from "./sha.ts";
 
 /** A logged in user, without their password hash */
@@ -27,19 +25,19 @@ function bearerToken(req: Request) {
  */
 export async function createSession(userId: Types.UUID) {
   const token = randomBytes(32).toString("base64url");
-  const session = await Session.create({ userId, tokenHash: await sha256(token) });
+  const session = await sessions.create({ userId, tokenHash: await sha256(token) });
   return { token, expiresAt: session.expiresAt };
 }
 
 /** Find the user a session token belongs to, ignoring expired sessions */
 async function findSessionUser(token: string) {
   // The TTL index only removes expired sessions periodically, so check here too
-  const session = await Session.findOne({
+  const session = await sessions.findOne({
     tokenHash: await sha256(token),
     expiresAt: { $gt: new Date() },
   });
   if (!session) return null;
-  return User.findById(session.userId, "-passwordHash");
+  return users.findById(session.userId, "-passwordHash");
 }
 
 /**

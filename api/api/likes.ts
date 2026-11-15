@@ -1,6 +1,5 @@
 import type { Request } from "express";
 import * as v from "valibot";
-
 import type { AuthResponse } from "../auth.ts";
 import { isDuplicateKeyError, likes, posts } from "../db.ts";
 import { PostSchema } from "../schemas.ts";

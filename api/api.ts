@@ -1,7 +1,7 @@
 import express from "express";
-
-import { handleGetHealth } from "./api/health.ts";
-import { handleCreateLike, handleDeleteLike, handleGetLike } from "./api/likes.ts";
+import { optionalAuth, requireAuth } from "./auth.ts";
+import { attachLiveServer } from "./live.ts";
+import { logger } from "./log.ts";
 import {
   handleCreatePost,
   handleDeletePost,
@@ -9,6 +9,7 @@ import {
   handleGetPosts,
   handleUpdatePost,
 } from "./api/posts.ts";
+import { handleCreateLike, handleDeleteLike, handleGetLike } from "./api/likes.ts";
 import {
   handleCreateUser,
   handleDeleteUser,
@@ -16,9 +17,7 @@ import {
   handleLoginUser,
   handleUpdateUser,
 } from "./api/users.ts";
-import { optionalAuth, requireAuth } from "./auth.ts";
-import { attachLiveServer } from "./live.ts";
-import { logger } from "./log.ts";
+import { handleGetHealth } from "./api/health.ts";
 
 const log = logger("api");
 

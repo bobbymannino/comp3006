@@ -232,32 +232,6 @@ point of this is to ensure that all the components work together as expected.
 
 _TODO_
 
-### Test Coverage
-
-Table: API Test Coverage
-
-| File         | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s |
-| ------------ | ------- | -------- | ------- | ------- | ----------------- |
-| All files    | 41.95   | 14.54    | 36.36   | 36.87   |                   |
-| api          | 79.78   | 69.56    | 69.56   | 75.51   |                   |
-| api.ts       | 0       | 100      | 0       | 0       | 23-60             |
-| auth.ts      | 100     | 100      | 100     | 100     |                   |
-| db-errors.ts | 100     | 100      | 100     | 100     |                   |
-| db.ts        | 100     | 0        | 100     | 100     | 19                |
-| env.ts       | 100     | 100      | 100     | 100     |                   |
-| index.ts     | 85.71   | 100      | 100     | 85.71   | 14,22             |
-| live.ts      | 0       | 0        | 0       | 0       | 7-42              |
-| log.ts       | 100     | 100      | 100     | 100     |                   |
-| models.ts    | 100     | 100      | 100     | 100     |                   |
-| schemas.ts   | 100     | 100      | 100     | 100     |                   |
-| sha.ts       | 100     | 100      | 100     | 100     |                   |
-| text.ts      | 100     | 100      | 100     | 100     |                   |
-| api/api      | 0       | 0        | 0       | 0       |                   |
-| health.ts    | 0       | 0        | 0       | 0       | 7-12              |
-| likes.ts     | 0       | 0        | 0       | 0       | 11-65             |
-| posts.ts     | 0       | 0        | 0       | 0       | 10-151            |
-| users.ts     | 0       | 0        | 0       | 0       | 10-155            |
-
 ## Continuous Integration/Deployment
 
 Using GitHub's automation platform **Actions**[^gh-actions], I will add in

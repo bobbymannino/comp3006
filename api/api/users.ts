@@ -1,7 +1,6 @@
-import { hash, verify } from "@node-rs/bcrypt";
 import type { Response, Request } from "express";
+import { hash, verify } from "@node-rs/bcrypt";
 import * as v from "valibot";
-
 import { createSession, type AuthResponse } from "../auth.ts";
 import { isDuplicateKeyError, likes, posts, sessions, users } from "../db.ts";
 import { LoginBodySchema, SignupBodySchema, UpdateUserBodySchema } from "../schemas.ts";

@@ -1,5 +1,4 @@
 import { describe } from "@jest/globals";
-
 import { sha256 } from "./sha.ts";
 
 describe("SHA-256", () => {

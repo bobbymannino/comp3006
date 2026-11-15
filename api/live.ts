@@ -1,7 +1,5 @@
 import type { Server } from "node:http";
-
 import { WebSocket, WebSocketServer } from "ws";
-
 import { logger } from "./log.ts";
 
 const log = logger("live");
