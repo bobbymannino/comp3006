@@ -2,8 +2,9 @@ import os from "node:os";
 
 import { afterAll, describe, expect, it } from "@jest/globals";
 
-import { connectDb, db } from "./db.ts";
+import { connectDb, db, likes, posts, sessions, users } from "./db.ts";
 import { mongoUrl } from "./env.ts";
+import * as models from "./models.ts";
 
 afterAll(async () => {
   await db.disconnect();
@@ -34,3 +35,15 @@ describe("connectDb", () => {
   });
 });
 
+describe("collections", () => {
+  it.each([
+    ["users", users, models.User, "users"],
+    ["posts", posts, models.Post, "posts"],
+    ["likes", likes, models.Like, "likes"],
+    ["sessions", sessions, models.Session, "sessions"],
+  ])("%s is the shared model on the db connection", (_name, model, source, collection) => {
+    expect(model).toBe(source);
+    expect(model.db).toBe(db.connection);
+    expect(model.collection.collectionName).toBe(collection);
+  });
+});
