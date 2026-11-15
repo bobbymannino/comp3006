@@ -84,7 +84,7 @@ export function SignupForm() {
         </p>
       )}
 
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending} id="signup-button">
         {pending ? "Signing up..." : "Sign up"}
       </Button>
     </form>
