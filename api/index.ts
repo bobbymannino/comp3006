@@ -1,10 +1,13 @@
 import * as v from "valibot";
 
 import { createApiServer } from "./api.ts";
+import { connectDb } from "./db.ts";
 import { loadEnv } from "./env.ts";
 import { logger } from "./log.ts";
 
 const log = logger("index");
+
+await connectDb();
 
 const env = loadEnv();
 const port_str = env.API_PORT ?? "3000";
