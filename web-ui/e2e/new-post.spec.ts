@@ -15,3 +15,8 @@ test("login with test user, create post", async ({ page, context }) => {
   await expect(page).toHaveURL(/\/posts\/(?!new$)[^/]+$/);
   await expect(page.getByText(title).first()).toBeVisible();
 });
+
+test("anon user cannot see /posts/new", async ({ page }) => {
+  await page.goto("/posts/new");
+  await expect(page).not.toHaveURL("/posts/new");
+});
