@@ -24,7 +24,7 @@ test("login with invalid credentials", async ({ page }) => {
   await expect(page).toHaveURL("/login");
 });
 
-test("login with valid credentials", async ({ page }) => {
-  await loginWithTestUser(page);
+test("login with valid credentials", async ({ page, context }) => {
+  await loginWithTestUser({ page, context });
   await expect(page).not.toHaveURL("/login");
 });
