@@ -2,7 +2,7 @@ import os from "node:os";
 
 import { afterAll, describe, expect, it } from "@jest/globals";
 
-import { connectDb, db, likes, posts, sessions, users } from "./db.ts";
+import { connectDb, db, likes, posts, SESSION_TTL_MS, sessions, users } from "./db.ts";
 import { mongoUrl } from "./env.ts";
 import * as models from "./models.ts";
 
@@ -45,5 +45,11 @@ describe("collections", () => {
     expect(model).toBe(source);
     expect(model.db).toBe(db.connection);
     expect(model.collection.collectionName).toBe(collection);
+  });
+});
+
+describe("re-exports", () => {
+  it("re-exports SESSION_TTL_MS", () => {
+    expect(SESSION_TTL_MS).toBe(models.SESSION_TTL_MS);
   });
 });
