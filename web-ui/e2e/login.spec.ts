@@ -1,10 +1,5 @@
 import { expect, test } from "@playwright/test";
-
-const TEST_USER = {
-  username: "bob",
-  password: "password123",
-  displayName: "Bob Mannino",
-};
+import { loginWithTestUser, TEST_USER } from "./test-utils";
 
 test("login form shows errors for empty fields", async ({ page }) => {
   await page.goto("/login");
@@ -30,11 +25,6 @@ test("login with invalid credentials", async ({ page }) => {
 });
 
 test("login with valid credentials", async ({ page }) => {
-  await page.goto("/login");
-
-  await page.locator("#username").fill(TEST_USER.username);
-  await page.locator("#password").fill(TEST_USER.password);
-  await page.locator("#login-button").click();
-
+  await loginWithTestUser(page);
   await expect(page).not.toHaveURL("/login");
 });
