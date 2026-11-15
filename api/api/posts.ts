@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import * as v from "valibot";
+
 import type { AuthResponse, OptionalAuthResponse } from "../auth.ts";
 import { isDuplicateKeyError, likes, posts, users } from "../db.ts";
 import { broadcastPost } from "../live.ts";
