@@ -2,7 +2,21 @@ import os from "node:os";
 
 import { afterAll, describe, expect, it } from "@jest/globals";
 
-import { connectDb, db, likes, posts, SESSION_TTL_MS, sessions, users } from "./db.ts";
+import * as dbErrors from "./db-errors.ts";
+import {
+  connectDb,
+  db,
+  Like,
+  Post,
+  User,
+  Session,
+  likes,
+  posts,
+  SESSION_TTL_MS,
+  sessions,
+  users,
+  isDuplicateKeyError,
+} from "./db.ts";
 import { mongoUrl } from "./env.ts";
 import * as models from "./models.ts";
 
@@ -51,5 +65,16 @@ describe("collections", () => {
 describe("re-exports", () => {
   it("re-exports SESSION_TTL_MS", () => {
     expect(SESSION_TTL_MS).toBe(models.SESSION_TTL_MS);
+  });
+
+  it("re-exports models", () => {
+    expect(Like).toBe(models.Like);
+    expect(Post).toBe(models.Post);
+    expect(Session).toBe(models.Session);
+    expect(User).toBe(models.User);
+  });
+
+  it("re-exports isDuplicateKeyError", () => {
+    expect(isDuplicateKeyError).toBe(dbErrors.isDuplicateKeyError);
   });
 });
