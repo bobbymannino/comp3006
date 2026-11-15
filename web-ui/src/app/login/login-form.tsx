@@ -66,7 +66,7 @@ export function LoginForm() {
         </p>
       )}
 
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending} id="login-button">
         {pending ? "Logging in..." : "Log in"}
       </Button>
     </form>
