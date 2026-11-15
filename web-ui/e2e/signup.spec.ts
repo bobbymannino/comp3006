@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { randomUUID } from "node:crypto";
 
 test("signup form shows errors for empty fields", async ({ page }) => {
   await page.goto("/signup");
@@ -32,4 +33,18 @@ test("signup with invalid username and email", async ({ page }) => {
   await expect(page.locator("#displayName-error")).toBeHidden();
   await expect(page.locator("#username")).toBeFocused();
   await expect(page).toHaveURL("/signup");
+});
+
+test("signup with valid info", async ({ page }) => {
+  await page.goto("/signup");
+
+  const id = randomUUID().replace(/-/g, "").slice(0, 10);
+
+  await page.locator("#displayName").fill("Test User");
+  await page.locator("#username").fill(`test_${id}`);
+  await page.locator("#email").fill(`test_${id}@example.com`);
+  await page.locator("#password").fill("password123");
+  await page.locator("#signup-button").click();
+
+  await expect(page).not.toHaveURL("/signup");
 });
