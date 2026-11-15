@@ -93,7 +93,7 @@ export function PostForm() {
         </p>
       )}
 
-      <Button type="submit" disabled={pending} className="self-start">
+      <Button type="submit" disabled={pending} className="self-start" id="create-post-button">
         {pending ? "Creating..." : "Create post"}
       </Button>
     </form>
