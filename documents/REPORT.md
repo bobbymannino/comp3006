@@ -88,8 +88,10 @@ Table: Existing Products Comparison
 In this project I have used AI. It has been used to create a huge amount of
 seeding data for the database, this makes the app feel more realistic and less
 like a generic blog platform. It has also been used to speed up the creation of
-tests, I want to have as many unit and integration tests as possible and so I
-have used AI to add as many as it can think on top of mine.
+tests. I want to have as many unit and integration tests as possible and so I
+have used AI to add as many as it can think on top of mine. I have read through
+every single line of tests that the AI created and ensured that I understood
+anything it added.
 
 ## Architecture
 
