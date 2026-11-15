@@ -21,5 +21,5 @@ export async function loginWithTestUser({
   const cookies = await context.cookies();
   const token = cookies.find((c) => c.name === "token");
   if (!token) throw new Error("No token found");
-  return token.value;
+  return token;
 }
