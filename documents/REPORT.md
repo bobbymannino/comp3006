@@ -216,13 +216,20 @@ Table: API Endpoints
 
 ## Testing
 
-### Isolated Testing
+### Unit Testing
 
 This testing will be isolated to each image, for instance API testing will be
 API specific and not interact with any other component (such as Nginx). This
 will be useful for rapid testing and isolated test suites for scoped changes.
 
-_TODO_
+In the API image there are 4 different test scripts. Jest[^jest] runs the unit
+tests in one of the scripts, this script requires nothing to be running to work
+so it can be ran in CI. There is also a `:coverage` option for this which does
+exactly the same but also lets you know about the code coverage for the tests.
+
+The other script - just `test` and `test:coverage` - requires the database to be
+running to work. That is because it interacts with functions and endpoints that
+CRUD data. All data that is added is removed afterwords.
 
 ### Holistic Testing
 
@@ -266,9 +273,10 @@ Table: API Test Coverage
 
 ## Continuous Integration/Deployment
 
-Using GitHub's automation platform **Actions**[^gh-actions], I will add in
-continuous testing along with automated Docker image creation. The image
-creation will only apply to the **web UI and API** images.
+Using GitHub's automation platform **Actions**[^gh-actions], I have continuous
+testing along with automated Docker image creation. The image creation will only
+apply to the **web UI and API** images, and the test automation will only be
+unit tests since I…
 
 The latest version of the API and web UI images are available on Docker Hub:
 <https://hub.docker.com/r/bobbymannino>.
