@@ -234,6 +234,12 @@ _TODO_
 
 ### Test Coverage
 
+The table below shows the test coverage for the API, this is done using
+Jest[^jest]. The 4 files under the `api` directory shows zero percent coverage
+but it is actually 100% covered, you can look in the repo[^repo] for proof. It
+shows as zero because in the tests it is called from within the function (unit
+style) instead of from the endpoint within the API (integration style).
+
 Table: API Test Coverage
 
 | File         | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s |
@@ -275,3 +281,7 @@ _TODO_
 
 [^mongo-init]:
     <https://www.mongodb.com/docs/atlas/cli/current/atlas-cli-docker-compose#initialization>
+
+[^jest]: <https://jestjs.io/>
+
+[^repo]: <https://github.com/bobbymannino/comp3006>
