@@ -6,16 +6,12 @@ company: "University of Plymouth, Student Number 10878582"
 
 ## Links
 
-**GitHub Repository:**
-[github.com/bobbymannino/comp3006](https://github.com/bobbymannino/comp3006)
-
-**YouTube Video:** _TODO_
-
-**API Docker Image:**
-[hub.docker.com/r/bobbymannino/comp3006-api](https://hub.docker.com/r/bobbymannino/comp3006-api/tags)
-
-**Web UI Docker Image:**
-[hub.docker.com/r/bobbymannino/comp3006-web-ui](https://hub.docker.com/r/bobbymannino/comp3006-web-ui/tags)
+- **GitHub Repository:** <https://github.com/bobbymannino/comp3006>
+- **YouTube Video:** <https://youtu.be/QGzrDtpBVmA>
+- **API Docker Image:**
+  <https://hub.docker.com/r/bobbymannino/comp3006-api/tags>
+- **Web UI Docker Image:**
+  <https://hub.docker.com/r/bobbymannino/comp3006-web-ui/tags>
 
 ## Introduction
 
