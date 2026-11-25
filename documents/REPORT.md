@@ -83,11 +83,12 @@ Table: Existing Products Comparison
 
 In this project I have used AI. It has been used to create a huge amount of
 seeding data for the database, this makes the app feel more realistic and less
-like a generic blog platform. It has also been used to speed up the creation of
-tests. I want to have as many unit and integration tests as possible and so I
-have used AI to add as many as it can think on top of mine. I have read through
-every single line of tests that the AI created and ensured that I understood
-anything it added.
+bare. It has also been used to speed up the creation of tests. As I want to have
+as many unit and integration tests as possible, I have used AI to add a large
+amount of tests on top of mine. I have read through every single line of tests
+that the AI created and ensured that I understood anything it added. I've also
+slightly modified the output to more align with my style of coding, maintain
+simplicity, and adhere closely to DRY[^dry].
 
 ## Architecture
 
@@ -333,3 +334,5 @@ _TODO_
     <https://automationpanda.com/2020/07/07/arrange-act-assert-a-pattern-for-writing-good-tests/>
 
 [^mongo-ttl]: <https://www.mongodb.com/docs/manual/core/index-ttl/>
+
+[^dry]: <https://en.wikipedia.org/wiki/Don't_repeat_yourself>
