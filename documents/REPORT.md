@@ -190,6 +190,10 @@ This allows for 2 things that I have used:
   created when the container starts.
 - You can have a seed file to populate the database with some initial data.
 
+MongoDB also has a useful _Time to Live_[^mongo-ttl] (TTL) feature that
+automatically removes rows when a certain timestamp field reaches a certain
+lifespan. This is used for removing expired sessions.
+
 ### API Endpoints
 
 > [!NOTE]
@@ -327,3 +331,5 @@ _TODO_
 
 [^arrange-act-assert]:
     <https://automationpanda.com/2020/07/07/arrange-act-assert-a-pattern-for-writing-good-tests/>
+
+[^mongo-ttl]: <https://www.mongodb.com/docs/manual/core/index-ttl/>
