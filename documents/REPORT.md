@@ -90,6 +90,8 @@ that the AI created and ensured that I understood anything it added. I've also
 slightly modified the output to more align with my style of coding, maintain
 simplicity, and adhere closely to DRY[^dry].
 
+I did not use AI to write this report.
+
 ## Architecture
 
 ### Architecture Topology
@@ -303,6 +305,10 @@ Table: API Test Coverage
 | posts.ts     | 0       | 0        | 0       | 0       | 10-151            |
 | users.ts     | 0       | 0        | 0       | 0       | 10-155            |
 
+### User Acceptance Testing
+
+…
+
 ## Continuous Integration/Deployment
 
 Using GitHub's automation platform **Actions**[^gh-actions], I have continuous
@@ -312,12 +318,80 @@ created. The test automation will only be unit tests since the integration tests
 require the database or API to be running. I still run integration/regression
 testing manually before every general release to ensure maximum coverage.
 
+Below is the workflow file for creating the API Docker image. It runs manually
+or on any commit to main where that API directory or workflow file changes. Only
+one instance can run at once, that being the latest commit. Since the
+`Dockerfile` is already in the repo there is little lines of code to build/push
+the image. Something to note is how the `platforms` field is set to both _amd64_
+and _arm64_ which is needed because I am running this on an ARM Mac.
+
+Code: API image workflow
+
+```yaml
+name: API image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - api/**
+      - .github/workflows/api-image.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api-image
+  cancel-in-progress: true
+
+env:
+  IMAGE: ${{ vars.DOCKERHUB_USERNAME }}/comp3006-api
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: docker/setup-buildx-action@v4
+
+      - uses: docker/login-action@v4
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - id: version
+        run:
+          echo "version=$(jq -r .version api/package.json)" >> "$GITHUB_OUTPUT"
+
+      # Tags the image as `latest`, the package.json version and the short commit SHA
+      - id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=sha
+            type=raw,value=v${{ steps.version.outputs.version }}
+            type=raw,value=latest
+
+      - uses: docker/build-push-action@v7
+        with:
+          context: api
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+```
+
 The latest version of the API and web UI images are available on Docker Hub:
 <https://hub.docker.com/r/bobbymannino>.
 
 ## Evaluation
 
-_TODO_
+…
 
 [^gh-actions]: <https://github.com/features/actions>
 
