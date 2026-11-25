@@ -180,14 +180,15 @@ so the `FK` fields are references the API is responsible for keeping valid.
 
 > [!NOTE]
 > When a user deletes their account (FR02) the API will also delete their
-> sessions, their posts, the likes on those posts and the likes they have given,
-> so no documents are left pointing at a user that no longer exists.
+> sessions, their posts, the likes on those posts and, the likes they have
+> given, so no documents are left pointing at a user that no longer exists.
 
 When using MongoDB there is a feature to have an _init_ scripts[^mongo-init].
-This allows for 2 things that I have used: firstly you can have a schema
-creation file to make sure that the database schema is created when the
-container starts, and secondly you can have a seed file to populate the database
-with some initial data.
+This allows for 2 things that I have used:
+
+- You can have a schema creation file to make sure that the database schema is
+  created when the container starts.
+- You can have a seed file to populate the database with some initial data.
 
 ### API Endpoints
 
@@ -235,7 +236,35 @@ Comprehensive testing will be carried out on the whole system together,
 including every part, and will make sure they all function as intended. The
 point of this is to ensure that all the components work together as expected.
 
-_TODO_
+This is done via Playwright[^playwright]. Playwright is testing framework
+developed by Microsoft that allows you to write end-to-end tests for web
+applications. In my case the database and API will both be running first, the
+database does not need to be seeded for the tests to run. There are a series of
+test files each oriented around different features, i.e. login, posts, account,
+etc. Each one will have multiple stories where it's aim is to navigate pages,
+complete actions and check results. This kind of testing follows the
+AAA[^arrange-act-assert] testing method.
+
+Code: Playwright login test
+
+```ts
+test("login with valid credentials", async ({ page, context }) => {
+  // Arrange
+  await page.goto("/login");
+
+  // Act
+  await page.locator("#username").fill(TEST_USER.username);
+  await page.locator("#password").fill(TEST_USER.password);
+  await page.locator("#login-button").click();
+  await page.waitForURL("/");
+  const cookies = await context.cookies();
+
+  // Assert
+  const token = cookies.find((c) => c.name === "token");
+  if (!token) throw new Error("No token found");
+  await expect(page).not.toHaveURL("/login");
+});
+```
 
 ### Test Coverage
 
@@ -273,8 +302,10 @@ Table: API Test Coverage
 
 Using GitHub's automation platform **Actions**[^gh-actions], I have continuous
 testing along with automated Docker image creation. The image creation will only
-apply to the **web UI and API** images, and the test automation will only be
-unit tests since I…
+apply to the **web UI and API** images since Nginx and MongoDB do not need to be
+created. The test automation will only be unit tests since the integration tests
+require the database or API to be running. I still run integration/regression
+testing manually before every general release to ensure maximum coverage.
 
 The latest version of the API and web UI images are available on Docker Hub:
 <https://hub.docker.com/r/bobbymannino>.
@@ -291,3 +322,8 @@ _TODO_
 [^jest]: <https://jestjs.io/>
 
 [^repo]: <https://github.com/bobbymannino/comp3006>
+
+[^playwright]: <https://playwright.dev/>
+
+[^arrange-act-assert]:
+    <https://automationpanda.com/2020/07/07/arrange-act-assert-a-pattern-for-writing-good-tests/>
